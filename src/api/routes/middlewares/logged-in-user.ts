@@ -15,7 +15,7 @@ export async function permissionMiddleware(req, res, next) {
         },
     })
 
-    console.log(loggedInUser);
+    // console.log(loggedInUser);
 
 
     next()
