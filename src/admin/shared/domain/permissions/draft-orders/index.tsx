@@ -5,6 +5,8 @@ import {Plus} from "@medusajs/icons"
 import BodyCard from "../../../components/body-card";
 import TableViewHeader from "../../../components/table-view-header";
 import DraftOrderTable from "../../../components/draft-order-table";
+import NewOrderFormProvider from "../../../components/form";
+import NewOrder from "../../../components/new-order";
 
 const DraftOrderIndex = () => {
     const navigate = useNavigate()
@@ -47,11 +49,11 @@ const DraftOrderIndex = () => {
                 </BodyCard>
             </div>
             <div className="h-xlarge w-full"/>
-            {/*{showNewOrder && (*/}
-            {/*    <NewOrderFormProvider>*/}
-            {/*        <NewOrder onDismiss={() => setShowNewOrder(false)}/>*/}
-            {/*    </NewOrderFormProvider>*/}
-            {/*)}*/}
+            {showNewOrder && (
+                <NewOrderFormProvider>
+                    <NewOrder onDismiss={() => setShowNewOrder(false)}/>
+                </NewOrderFormProvider>
+            )}
         </div>
     )
 }
