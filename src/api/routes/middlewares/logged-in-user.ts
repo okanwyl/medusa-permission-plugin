@@ -9,6 +9,8 @@ export async function permissionMiddleware(req, res, next) {
         loggedInUser = await userService.retrieve(req.user.userId)
     }
 
+    console.log(loggedInUser);
+
     req.scope.register({
         loggedInUser: {
             resolve: () => loggedInUser,
