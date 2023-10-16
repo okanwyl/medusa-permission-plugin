@@ -16,9 +16,13 @@ export class MyMigration1617703530229 implements MigrationInterface {
             name: "permissions",
             columns: [
                 {
-                    name: "role",
+                    name: "id",
                     type: "varchar",
                     isPrimary: true,
+                },
+                {
+                    name: "role",
+                    type: "varchar",
                     isUnique: true,
                     isNullable: false,
                 },
@@ -27,12 +31,37 @@ export class MyMigration1617703530229 implements MigrationInterface {
                     type: "jsonb",
                     isNullable: true,
                 },
+                {
+                    name: "created_at",
+                    type: "timestamp",
+                    default: "CURRENT_TIMESTAMP",
+                    isNullable: false,
+                },
+                {
+                    name: "updated_at",
+                    type: "timestamp",
+                    default: "CURRENT_TIMESTAMP",
+                    isNullable: false,
+                },
+                {
+                    name: "deleted_at",
+                    type: "timestamp",
+                    isNullable: true,
+                },
+                {
+                    name: "metadata",
+                    type: "jsonb",
+                    isNullable: true,
+                },
             ],
+
+
         }));
 
         // Insert default data to 'policies' table
-        await queryRunner.query(`INSERT INTO permissions(role, bjson)
-                                 VALUES ('member', '{"canRead": true, "canWrite": false}')`);
+        await queryRunner.query(`INSERT INTO permissions(id, role, bjson)
+                                 VALUES ('permis_01HCVZ6T0PE30T5G98PD36643X', 'member',
+                                         '{"canRead": true, "canWrite": false}')`);
 
         // Add foreign key relation between user and policies based on role
         await queryRunner.createForeignKey("user", new TableForeignKey({
