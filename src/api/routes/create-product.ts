@@ -4,6 +4,7 @@ import
     authenticate
     from "@medusajs/medusa/dist/api/middlewares/authenticate"
 import {permissionMiddleware} from "./middlewares/logged-in-user";
+import {errorHandler} from "@medusajs/medusa";
 
 
 const router = Router();
@@ -14,7 +15,8 @@ export default function createProductRouter(adminConfiguration) {
         /^\/admin(?!\/auth(\/|$))/,
         cors(adminConfiguration),
         authenticate(),
-        permissionMiddleware
+        permissionMiddleware,
+        errorHandler()
     )
 
 

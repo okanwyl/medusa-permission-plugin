@@ -10,11 +10,14 @@ export default function (rootDirectory: string) {
         credentials: true,
     }
 
-    const defaultRouters = [
-        connectRouterOverrider(adminCors),
-    ]
 
     const permissionRouter = getAdminRouter(adminCors);
 
-    return [ permissionRouter]
+    const defaultRouters = [
+        connectRouterOverrider(adminCors),
+        permissionRouter
+    ]
+
+
+    return [...defaultRouters]
 }
