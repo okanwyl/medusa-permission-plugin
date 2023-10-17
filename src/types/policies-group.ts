@@ -7,18 +7,14 @@ export declare type CreatePoliciesGroup = {
     policies?: CreatePolicyGroupPolicyInput[] | null;
 }
 
-export declare type UpdatePoliciesGroup = {
-    name?: string;
-    handle?: string;
-    description?: string;
-    policies?: string[];
-}
-
 export type CreatePolicyGroupPolicyInput = {
     id: string
 }
 
-export class ProductProductCategoryReq {
+export class PoliciesGroupPolicyReq {
     @IsString()
     id: string
 }
+
+
+export type UpdatePoliciesGroup = Partial<CreatePoliciesGroup>

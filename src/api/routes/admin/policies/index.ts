@@ -1,6 +1,6 @@
 import {Router} from "express"
 import "reflect-metadata"
-import {PaginatedResponse, transformBody} from "@medusajs/medusa"
+import {transformBody} from "@medusajs/medusa"
 import middlewares, {
     transformQuery,
 } from "@medusajs/medusa/dist/api/middlewares"
@@ -22,9 +22,7 @@ export default (app) => {
     route.get(
         "/",
         transformQuery(AdminGetUniversityParams, {
-            defaultRelations: defaultAdminUniversityRelations,
-            defaultFields: defaultAdminUniversityFields,
-            isList: true,
+            isList: true
         }),
         middlewares.wrap(require("./list-policies").default)
     )
@@ -53,20 +51,9 @@ export default (app) => {
     return app
 };
 
-export const defaultAdminUniversityFields = []
-
-export const defaultAdminUniversityRelations = []
-
-export type AdminUniversityListRes = PaginatedResponse & {
-    permissions: Permissions[]
-}
-
-
-export type DeleteResponse = {
-    id: string
-    object: string
-    deleted: boolean
-}
 
 export * from "./list-policies"
 export * from "./create-policy"
+export * from "./delete-policy"
+export * from "./update-policy"
+

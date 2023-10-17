@@ -22,9 +22,6 @@ export class PoliciesGroup extends SoftDeletableEntity {
     @Column({type: "varchar", nullable: true})
     description: string;
 
-    // @ManyToMany(() => Policies)
-    // @JoinTable()
-
     @ManyToMany(() => Policies, {cascade: ["remove", "soft-remove"]})
     @JoinTable({
         name: "policies_group_policies",

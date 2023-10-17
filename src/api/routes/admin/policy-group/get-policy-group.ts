@@ -1,5 +1,5 @@
 import {Request, Response} from "express"
-import {defaultAdminUniversityRelations} from "./index"
+import {defaultAdminPolicyGroupRelations} from "./index"
 import PoliciesGroupService from "../../../../services/policies-group";
 
 export default async (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ export default async (req: Request, res: Response) => {
         req.scope.resolve("policiesGroupService")
 
     const policyGroup = await policiesGroupService.retrieve(id, {
-        relations: defaultAdminUniversityRelations,
+        relations: defaultAdminPolicyGroupRelations,
     })
     res.status(200).json({policy: policyGroup})
 }

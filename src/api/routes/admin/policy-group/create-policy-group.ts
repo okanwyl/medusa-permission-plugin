@@ -7,14 +7,13 @@ import {
 } from "class-validator"
 import {Request, Response} from "express"
 import {EntityManager} from "typeorm"
-import {defaultAdminUniversityRelations} from "./index"
+import {defaultAdminPolicyGroupRelations} from "./index"
 import PoliciesGroupService from "../../../../services/policies-group";
-import {ProductProductCategoryReq} from "../../../../types/policies-group";
+import {PoliciesGroupPolicyReq} from "../../../../types/policies-group";
 import {Type} from "class-transformer";
 import {validator} from "@medusajs/medusa";
 
 export default async (req: Request, res: Response) => {
-    // const {validatedBody} = req as { validatedBody: AdminPoliciesGroupReq }
     const validated = await validator(AdminPoliciesGroupReq, req.body)
 
     console.log(validated);
@@ -30,7 +29,7 @@ export default async (req: Request, res: Response) => {
     })
 
     const policiesGroup = await policiesGroupService.retrieve(created.id, {
-        relations: defaultAdminUniversityRelations,
+        relations: defaultAdminPolicyGroupRelations,
     })
 
     res.status(200).json({policiesGroup})
@@ -51,8 +50,8 @@ export class AdminPoliciesGroupReq {
     description?: string;
 
     @IsOptional()
-    @Type(() => ProductProductCategoryReq)
-    @ValidateNested({ each: true })
+    @Type(() => PoliciesGroupPolicyReq)
+    @ValidateNested({each: true})
     @IsArray()
-    policies?: ProductProductCategoryReq[]
+    policies?: PoliciesGroupPolicyReq[]
 }

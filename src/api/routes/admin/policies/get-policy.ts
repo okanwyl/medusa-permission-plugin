@@ -1,5 +1,4 @@
 import {Request, Response} from "express"
-import {defaultAdminUniversityRelations} from "./index"
 import PoliciesService from "../../../../services/policies";
 
 export default async (req: Request, res: Response) => {
@@ -8,8 +7,6 @@ export default async (req: Request, res: Response) => {
     const policiesService: PoliciesService =
         req.scope.resolve("policiesService")
 
-    const policy = await policiesService.retrieve(id, {
-        relations: defaultAdminUniversityRelations,
-    })
+    const policy = await policiesService.retrieve(id, {})
     res.status(200).json({policy})
 }

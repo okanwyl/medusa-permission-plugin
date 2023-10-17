@@ -19,8 +19,7 @@ export default (app) => {
     route.get(
         "/",
         transformQuery(AdminGetUniversityParams, {
-            defaultRelations: defaultAdminUniversityRelations,
-            defaultFields: defaultAdminUniversityFields,
+            defaultRelations: defaultAdminPolicyGroupRelations,
             isList: true,
         }),
         middlewares.wrap(require("./list-policy-group").default)
@@ -49,22 +48,14 @@ export default (app) => {
     return app
 };
 
-export const defaultAdminUniversityFields = []
 
-export const defaultAdminUniversityRelations = [
+export const defaultAdminPolicyGroupRelations = [
     "policies"
 ]
 
-export type AdminUniversityListRes = PaginatedResponse & {
-    permissions: Permissions[]
-}
-
-
-export type DeleteResponse = {
-    id: string
-    object: string
-    deleted: boolean
-}
 
 export * from "./list-policy-group"
 export * from "./create-policy-group"
+export * from "./delete-policy-group"
+export * from "./get-policy-group"
+export * from "./update-policy-group"

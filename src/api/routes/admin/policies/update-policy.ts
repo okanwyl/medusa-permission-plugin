@@ -1,7 +1,6 @@
 import {IsArray, IsNotEmpty, IsObject, IsOptional, IsString} from "class-validator"
 import {Request, Response} from "express"
 import {EntityManager} from "typeorm"
-import {defaultAdminUniversityRelations} from "."
 import PoliciesService from "../../../../services/policies";
 
 export default async (req: Request, res: Response) => {
@@ -20,9 +19,7 @@ export default async (req: Request, res: Response) => {
             .update(id, validatedBody)
     })
 
-    const policy = await policiesService.retrieve(updated.id, {
-        relations: defaultAdminUniversityRelations,
-    })
+    const policy = await policiesService.retrieve(updated.id, {})
 
     res.status(200).json({policy})
 }

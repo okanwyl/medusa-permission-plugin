@@ -1,13 +1,10 @@
 import {
-    IsArray,
     IsNotEmpty,
-    IsObject,
     IsOptional,
     IsString,
 } from "class-validator"
 import {Request, Response} from "express"
 import {EntityManager} from "typeorm"
-import {defaultAdminUniversityRelations} from "./index"
 import PoliciesService from "../../../../services/policies";
 
 export default async (req: Request, res: Response) => {
@@ -24,9 +21,7 @@ export default async (req: Request, res: Response) => {
             .create(validatedBody)
     })
 
-    const policy = await policiesService.retrieve(created.id, {
-        relations: defaultAdminUniversityRelations,
-    })
+    const policy = await policiesService.retrieve(created.id, {})
 
     res.status(200).json({university: policy})
 }

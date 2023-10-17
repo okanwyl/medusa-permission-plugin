@@ -165,24 +165,41 @@ export default class PoliciesGroupService extends TransactionBaseService {
 
             let policyGroup = await this.retrieve(policyGroupId)
 
+
+            const {
+                policies: policies,
+                ...rest
+            } = update
+
             const promises: Promise<any>[] = []
 
 
-            for (const [key, value] of Object.entries(update)) {
+            if (isDefined(policies)) {
+                policyGroup.policies = []
+
+                if (policies?.length) {
+                    const policyIds = policies.map((c) => c.id)
+                    policyGroup.policies = policyIds.map(
+                        (id) => ({id} as Policies)
+                    )
+                }
+            }
+
+            for (const [key, value] of Object.entries(rest)) {
                 policyGroup[key] = value
             }
 
 
-            policyGroup = await policiesGroupRepository.save(policyGroup)
+            const result = await policiesGroupRepository.save(policyGroup)
 
             await this.eventBusService_
                 .withTransaction(manager)
                 .emit(PoliciesGroupService.Events.UPDATED, {
-                    id: policyGroup.id,
+                    id: result.id,
                 })
 
-            return policyGroup
-        })
+            return result
+        });
     }
 
     async delete(policyGroupId: string): Promise<void> {
