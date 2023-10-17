@@ -1,0 +1,13 @@
+GET http://localhost:9000/admin/policy-groups/
+Content-Type: application/json
+
+{
+  "name": "mytest here6",
+  "description": "Test",
+  "policies": [
+    {
+      "id": "policy_01HCYHYDAY3FYF3ZMHFMMRH6BR"
+    }
+  ]
+}
+

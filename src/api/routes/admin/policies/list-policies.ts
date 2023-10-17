@@ -3,23 +3,23 @@ import {Request, Response} from "express"
 
 import {Type} from "class-transformer"
 import {DateComparisonOperator} from "@medusajs/medusa"
-import PermissionsService from "../../../../services/permissions";
+import PoliciesService from "../../../../services/policies";
 
 export default async (req: Request, res: Response) => {
-    const permissionService: PermissionsService =
-        req.scope.resolve("permissionsService")
+    const policiesService: PoliciesService =
+        req.scope.resolve("policiesService")
 
 
     const {filterableFields, listConfig} = req
     const {skip, take} = listConfig
 
-    const [permissions, count] = await permissionService.listAndCount(
+    const [policies, count] = await policiesService.listAndCount(
         filterableFields,
         listConfig
     )
 
     res.status(200).json({
-        permissions,
+        policies,
         count,
         offset: skip,
         limit: take,

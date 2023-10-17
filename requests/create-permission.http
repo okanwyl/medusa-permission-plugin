@@ -1,0 +1,10 @@
+GET http://localhost:9000/admin/policies
+Content-Type: application/json
+
+{
+  "name": "mytest here4",
+  "method": "TEST",
+  "base_router": "test"
+
+}
+

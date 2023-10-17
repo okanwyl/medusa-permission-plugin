@@ -14,8 +14,8 @@ export default function (rootDirectory: string) {
     const permissionRouter = getAdminRouter(adminCors);
 
     const defaultRouters = [
-        connectRouterOverrider(adminCors),
-        permissionRouter
+        permissionRouter,
+        connectRouterOverrider(adminCors)
     ]
 
 
