@@ -1,10 +1,11 @@
-GET http://localhost:9000/admin/policies
+POST http://localhost:9000/admin/policies
 Content-Type: application/json
 
 {
-  "name": "mytest here4",
-  "method": "TEST",
-  "base_router": "test"
+  "name": "a",
+  "method": "POST",
+  "base_router": "defined",
+  "custom_regex": "asdsa"
 
 }
 
