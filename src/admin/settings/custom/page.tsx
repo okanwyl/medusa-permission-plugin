@@ -1,23 +1,18 @@
 import type {SettingConfig} from "@medusajs/admin"
-import LockIcon from "../../shared/components/icons/user-permission-icon";
-import DraftOrders from "../../shared/domain/permissions/draft-orders";
-import {useTranslation} from "react-i18next";
-import BackButton from "../../shared/components/back-button";
-import BlogPost from "../../shared/hooks/policies";
-import PoliciesTable from "../../shared/components/policies-table";
+import LockIcon from "../../components/shared/icons/user-permission-icon";
+import Policies from "../../components/domain/permissions/policies";
+import BackButton from "../../components/shared/back-button";
 
 const CustomSettingPage = () => {
-    const {t} = useTranslation();
     return (
         <div>
-            <PoliciesTable/>
             <BackButton
-                label={t("pages-back-to-settings", "Back to settings")}
+                label="Back to settings"
                 path="/a/settings"
                 className="mb-xsmall"
             />
             <div>
-                <DraftOrders/>
+                <Policies/>
             </div>
         </div>
     )
