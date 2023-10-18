@@ -1,8 +1,8 @@
 import clsx from "clsx"
 import React, {ReactNode, useReducer} from "react"
+import Modal, { ModalProps } from "."
+import Button from "../button"
 import LayeredModal, {ILayeredModalContext} from "./layered-modal"
-import Modal, {ModalProps} from "./index";
-import Button from "../button";
 
 enum SteppedActions {
     ENABLENEXTPAGE,

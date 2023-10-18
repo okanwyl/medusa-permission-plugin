@@ -5,17 +5,16 @@ import {Controller} from "react-hook-form"
 import {useTranslation} from "react-i18next"
 import {useNewOrderForm} from "../form"
 import {useMedusa} from "medusa-react"
-import {SteppedContext} from "../modal/stepped-modal"
+import {SteppedContext} from "../modal/stepped-modal";
 import {LayeredModalContext} from "../modal/layered-modal";
-import {displayAmount, extractUnitPrice, getNativeSymbol, persistedPrice} from "../../../utils/prices"
+import {displayAmount, extractUnitPrice, getNativeSymbol, persistedPrice} from "../../../utils/prices";
 import Table from "../custom-table"
+import ImagePlaceholder from "../image-placehoilder"
 import InputField from "../input"
 import MinusIcon from "../icons/minus-icon"
 import PlusIcon from "../icons/plus-icon"
-import Button from "../button";
-import {Trash} from "@medusajs/icons";
+import Button from "../button"
 import RMASelectProductSubModal from "../rma-sub-modals";
-import ImagePlaceholder from "../image-placehoilder";
 import CustomItemSubModal from "../custom-item-sub-modal";
 
 const Items = () => {
@@ -256,7 +255,8 @@ const Items = () => {
                                             size="small"
                                             onClick={() => removeItem(index)}
                                         >
-                                            <Trash className="text-grey-50"/>
+                                            {/*<TrashIcon size={20} className="text-grey-50" />*/}
+                                            <PlusIcon size={20} className="text-grey-50"/>
                                         </Button>
                                     </Table.Cell>
                                 </Table.Row>

@@ -15,11 +15,9 @@ import {
     useWatch,
 } from "react-hook-form"
 import {useTranslation} from "react-i18next"
-import {Option} from "../../../types/shared";
-import {AddressPayload} from "../address-form";
+import {AddressPayload} from "../address-form"
 import {extractUnitPrice} from "../../../utils/prices";
-// import {AddressPayload} from "../../../../components/templates/address-form"
-// import {extractUnitPrice} from "../../../../utils/prices"
+import {Option} from "../../../types/shared";
 
 export type NewOrderForm = {
     shipping_address: AddressPayload

@@ -1,4 +1,4 @@
-POST http://localhost:9000/admin/policies
+GET http://localhost:9000/admin/policies
 Content-Type: application/json
 
 {

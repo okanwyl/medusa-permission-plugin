@@ -9,6 +9,10 @@ import useNotification from "../../hooks/use-notification/use-notification";
 import isNullishObject from "../../../utils/is-nullish-object";
 import SelectRegionScreen from "../select-region";
 import Items from "../items"
+import SelectShippingMethod from "../select-shipping-method"
+import CreatePolicy from "../../../../api/routes/admin/policies/create-policy";
+import CreatePolicyScreen from "../create-policy-screen";
+import ShippingDetails from "../shipping-details";
 // import Summary from "../../../../../.cache/admin/src/domain/orders/new/components/summary";
 
 type NewOrderProps = {
@@ -30,13 +34,29 @@ const NewOrder = ({onDismiss}: NewOrderProps) => {
     } = useNewOrderForm()
 
 
-    let a;
-    // region_id: data.region.value,
     const onSubmit = handleSubmit((data) => {
-
-        a = data.region.value;
-        console.log("SUBMITTEDDDDD");
-        console.log("THIS IS AAAA", a);
+        mutate(
+            // @ts-ignore
+            {
+                region_id: data.region.value,
+            },
+            {
+                onSuccess: ({draft_order}) => {
+                    notification(
+                        t("new-success", "Success"),
+                        t("new-order-created", "Order created"),
+                        "success"
+                    )
+                    reset()
+                    onDismiss()
+                    steppedContext.reset()
+                    navigate(`/a/draft-orders/${draft_order.id}`)
+                },
+                onError: (error) => {
+                    notification(t("new-error", "Error"), error.message, "error")
+                },
+            }
+        )
     })
 
     return (
@@ -45,14 +65,16 @@ const NewOrder = ({onDismiss}: NewOrderProps) => {
             context={steppedContext}
             onSubmit={onSubmit}
             steps={[
-                <SelectRegionScreen/>,
+                // <SelectRegionScreen/>,
+                <ShippingDetails/>,
+                <CreatePolicyScreen/>
                 // <Items/>,
-                // <SelectShippingMethod />,
+                // <SelectShippingMethod/>,
                 // <ShippingDetails />,
                 // <Billing />,
                 // <Summary />,
             ]}
-            lastScreenIsSummary={true}
+            lastScreenIsSummary={false}
             title={t("new-create-draft-order", "Create Draft Order")}
             handleClose={onDismiss}
         />

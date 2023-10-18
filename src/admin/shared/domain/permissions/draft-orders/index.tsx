@@ -1,10 +1,10 @@
 import {Route, Routes, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import React, {useMemo, useState} from "react";
-import {Plus} from "@medusajs/icons"
 import BodyCard from "../../../components/body-card";
 import TableViewHeader from "../../../components/table-view-header";
 import DraftOrderTable from "../../../components/draft-order-table";
+import PlusIcon from "../../../components/icons/plus-icon";
 import NewOrderFormProvider from "../../../components/form";
 import NewOrder from "../../../components/new-order";
 
@@ -21,8 +21,8 @@ const DraftOrderIndex = () => {
             {
                 label: t("draft-orders-create-draft-order", "Create draft order"),
                 onClick: () => setShowNewOrder(true),
-                icon: <Plus/>,
-                // icon: <PlusIcon size={20}/>,
+                // icon: <Plus/>,
+                icon: <PlusIcon size={20}/>,
             },
         ]
     }, [view])
