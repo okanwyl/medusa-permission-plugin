@@ -1,71 +1,72 @@
-import {Route, Routes} from "react-router-dom";
-import React, {useMemo, useState} from "react";
+import { Route, Routes } from "react-router-dom";
+import React, { useMemo, useState } from "react";
 import BodyCard from "../../../shared/body-card";
 import TableViewHeader from "../../../shared/custom-table/table-view-header";
 import PlusIcon from "../../../shared/icons/plus-icon";
 import PoliciesTable from "../../../custom/policies/policies-table";
 import {
-    CreatePolicyModalProvider,
-    CreatePolicyModal,
-    useCreatePolicyModal
+  CreatePolicyModalProvider,
+  CreatePolicyModal,
+  useCreatePolicyModal
 } from "../../../custom/policies/create-new-policy-modal";
 import EditPolicyPage from "../../../../routes/policy/[id]/page";
+import { SettingProps } from "@medusajs/admin";
 
-const PoliciesIndex = () => {
-    // const navigate = useNavigate()
+const PoliciesIndex = ({ notify }: SettingProps) => {
+  // const navigate = useNavigate()
 
-    const view = "policies"
-    const {showNewPolicy, setShowNewPolicy} = useCreatePolicyModal();
+  const view = "policies"
+  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal();
 
 
-    const actions = useMemo(() => {
-        return [
-            {
-                label: "Create policy",
-                onClick: () => setShowNewPolicy(true),
-                // icon: <Plus/>,
-                icon: <PlusIcon size={20}/>,
-            },
-        ]
-    }, [view])
+  const actions = useMemo(() => {
+    return [
+      {
+        label: "Create policy",
+        onClick: () => setShowNewPolicy(true),
+        // icon: <Plus/>,
+        icon: <PlusIcon size={20} />,
+      },
+    ]
+  }, [view])
 
-    return (
+  return (
 
-        <div className="gap-y-xsmall flex h-full grow flex-col">
-            <div className="flex w-full grow flex-col">
-                <BodyCard
-                    customHeader={
-                        <TableViewHeader
-                            views={["policies"]}
-                            // setActiveView={(v) => {
-                            //     if (v === "orders") {
-                            //         navigate(`/a/orders`)
-                            //     }
-                            // }}
-                            activeView={view}
-                        />
-                    }
-                    actionables={actions}
-                    className="h-fit"
-                >
-                    <PoliciesTable/>
-                </BodyCard>
-            </div>
-            <div className="h-xlarge w-full"/>
-            <CreatePolicyModal/>
-        </div>
-    )
+    <div className="gap-y-xsmall flex h-full grow flex-col">
+      <div className="flex w-full grow flex-col">
+        <BodyCard
+          customHeader={
+            <TableViewHeader
+              views={["policies"]}
+              // setActiveView={(v) => {
+              //     if (v === "orders") {
+              //         navigate(`/a/orders`)
+              //     }
+              // }}
+              activeView={view}
+            />
+          }
+          actionables={actions}
+          className="h-fit"
+        >
+          <PoliciesTable />
+        </BodyCard>
+      </div>
+      <div className="h-xlarge w-full" />
+      <CreatePolicyModal notify={notify} />
+    </div>
+  )
 }
 
-const Policies = () => {
-    return (
-            <CreatePolicyModalProvider>
-                <Routes>
-                    <Route index element={<PoliciesIndex/>}/>
-                    <Route path="/a/policy/:id" element={<EditPolicyPage />} />
-                </Routes>
-            </CreatePolicyModalProvider>
-    )
+const Policies = ({ notify }: SettingProps) => {
+  return (
+    <CreatePolicyModalProvider>
+      <Routes>
+        <Route index element={<PoliciesIndex notify={notify} />} />
+        <Route path="/a/policy/:id" element={<EditPolicyPage />} />
+      </Routes>
+    </CreatePolicyModalProvider>
+  )
 }
 
 export default Policies

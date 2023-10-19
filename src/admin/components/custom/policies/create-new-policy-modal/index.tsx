@@ -10,7 +10,7 @@ import {
   Badge
 } from "@medusajs/ui";
 import { mutateAdminPolicy } from "../../../hooks/policies";
-import { useNavigate } from "react-router-dom";
+import { SettingProps } from '@medusajs/admin';
 
 type createPolicyModalContextType = {
   showNewPolicy: boolean;
@@ -45,10 +45,10 @@ export const useCreatePolicyModal = () => {
 };
 
 
-export function CreatePolicyModal() {
+export function CreatePolicyModal({ notify }: SettingProps) {
   // State to store the input value
   const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal();
-  const navigate = useNavigate();
+
 
   const [policyName, setPolicyName] = useState('');
   const [description, setDescription] = useState('');
@@ -118,19 +118,37 @@ export function CreatePolicyModal() {
       onSuccess: (data) => {
         clearAllStates();
         setShowNewPolicy(false);
+        notify.success("success", "Successfully created policy")
       },
+
+
+      onError: (data) => {
+        if (
+          data.message.includes("422")
+        ) {
+          notify.error("error", "This policy name already exists.")
+        } else {
+          notify.error("error", "Something happened")
+        }
+      }
     })
 
   };
 
+
   return (
     <FocusModal
       open={showNewPolicy}
-      onOpenChange={setShowNewPolicy}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          clearAllStates()
+        }
+        setShowNewPolicy(isOpen);
+      }}
     >
       <FocusModal.Content>
         <FocusModal.Header>
-          <Button onClick={handleSave}>Save</Button>
+          <Button variant='primary' isLoading={isLoading} onClick={handleSave}>Save</Button>
         </FocusModal.Header>
         <FocusModal.Body className="flex flex-col items-center py-16">
           <div className="flex w-full max-w-lg flex-col gap-y-8">
@@ -248,8 +266,7 @@ export function CreatePolicyModal() {
                 Regex(optional)
               </Label>
               <Text className="text-ui-fg-subtle">
-                Create policy for your permissions. You can create multiple
-                policies to organize your permissions.
+                Create custom regex for your policy. You can use that as a permission requirement.
               </Text>
               <Input
                 id="custom_regex"
