@@ -11,9 +11,11 @@ import {
 } from "../../../custom/policies/create-new-policy-modal";
 import EditPolicyPage from "../../../../routes/policy/[id]/page";
 import { SettingProps } from "@medusajs/admin";
+import { useNavigate } from "react-router-dom"
+import GroupsPage from "../../../../routes/groups/page";
 
 const PoliciesIndex = ({ notify }: SettingProps) => {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const view = "policies"
   const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal();
@@ -37,12 +39,12 @@ const PoliciesIndex = ({ notify }: SettingProps) => {
         <BodyCard
           customHeader={
             <TableViewHeader
-              views={["policies"]}
-              // setActiveView={(v) => {
-              //     if (v === "orders") {
-              //         navigate(`/a/orders`)
-              //     }
-              // }}
+              views={["policies", "groups"]}
+              setActiveView={(v) => {
+                if (v === "groups") {
+                  navigate(`/a/groups`)
+                }
+              }}
               activeView={view}
             />
           }
@@ -64,6 +66,7 @@ const Policies = ({ notify }: SettingProps) => {
       <Routes>
         <Route index element={<PoliciesIndex notify={notify} />} />
         <Route path="/a/policy/:id" element={<EditPolicyPage />} />
+        <Route path="/a/groups/" element={<GroupsPage />} />
       </Routes>
     </CreatePolicyModalProvider>
   )
