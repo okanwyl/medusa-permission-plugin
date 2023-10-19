@@ -4,7 +4,12 @@ import BodyCard from "../../../shared/body-card";
 import TableViewHeader from "../../../shared/custom-table/table-view-header";
 import PlusIcon from "../../../shared/icons/plus-icon";
 import PoliciesTable from "../../../custom/policies/policies-table";
-import {CreatePolicyModalProvider, CreatePolicyModal, useCreatePolicyModal} from "../../../custom/policies/create-new-policy-modal";
+import {
+    CreatePolicyModalProvider,
+    CreatePolicyModal,
+    useCreatePolicyModal
+} from "../../../custom/policies/create-new-policy-modal";
+import EditPolicyPage from "../../../../routes/policy/[id]/page";
 
 const PoliciesIndex = () => {
     // const navigate = useNavigate()
@@ -54,12 +59,12 @@ const PoliciesIndex = () => {
 
 const Policies = () => {
     return (
-        <CreatePolicyModalProvider>
-            <Routes>
-                <Route index element={<PoliciesIndex/>}/>
-                {/*<Route path="/:id" element={<DraftOrderDetails />} />*/}
-            </Routes>
-        </CreatePolicyModalProvider>
+            <CreatePolicyModalProvider>
+                <Routes>
+                    <Route index element={<PoliciesIndex/>}/>
+                    <Route path="/a/policy/:id" element={<EditPolicyPage />} />
+                </Routes>
+            </CreatePolicyModalProvider>
     )
 }
 

@@ -1,4 +1,4 @@
-GET http://localhost:9000/admin/policies
+GET http://localhost:9000/admin/policies/policy_01HCZWCDQSKG1GQ25BR3BVEN7S
 Content-Type: application/json
 
 {

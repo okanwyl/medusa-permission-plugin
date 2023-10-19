@@ -13,6 +13,7 @@ const DEFAULT_PAGE_SIZE = 15
 const PolicyTable = () => {
     const location = useLocation()
 
+
     const {
         reset,
         paginate,
@@ -98,66 +99,69 @@ const PolicyTable = () => {
     }
 
     return (
-        <TableContainer
-            hasPagination
-            numberOfRows={DEFAULT_PAGE_SIZE}
-            pagingState={{
-                count: count!,
-                offset: queryObject.offset,
-                pageSize: queryObject.offset + rows.length,
-                title: "Policies",
-                currentPage: pageIndex + 1,
-                pageCount: pageCount,
-                nextPage: handleNext,
-                prevPage: handlePrev,
-                hasNext: canNextPage,
-                hasPrev: canPreviousPage,
-            }}
-            isLoading={isLoading || isRefetching}
-        >
-            <Table
-                filteringOptions={[]}
-                enableSearch
-                handleSearch={setQuery}
-                searchValue={query}
-                {...getTableProps()}
+        <>
+            <TableContainer
+                hasPagination
+                numberOfRows={DEFAULT_PAGE_SIZE}
+                pagingState={{
+                    count: count!,
+                    offset: queryObject.offset,
+                    pageSize: queryObject.offset + rows.length,
+                    title: "Policies",
+                    currentPage: pageIndex + 1,
+                    pageCount: pageCount,
+                    nextPage: handleNext,
+                    prevPage: handlePrev,
+                    hasNext: canNextPage,
+                    hasPrev: canPreviousPage,
+                }}
+                isLoading={isLoading || isRefetching}
             >
-                <Table.Head>
-                    {headerGroups?.map((headerGroup) => {
-                        return (
-                            <Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((col, index) => {
-                                    return (
-                                        <Table.HeadCell
-                                            className="w-[100px]"
-                                            {...col.getHeaderProps()}
-                                        >
-                                            {col.render("Header", {customIndex: index})}
-                                        </Table.HeadCell>
-                                    )
-                                })}
-                            </Table.HeadRow>
-                        )
-                    })}
-                </Table.Head>
-                <Table.Body {...getTableBodyProps()}>
-                    {rows.map((row) => {
-                        prepareRow(row)
-                        return (
-                            <Table.Row
-                                color={"inherit"}
-                                linkTo={`/a/draft-orders/${row.original.id}`}
-                                {...row.getRowProps()}
-                            >
-                                {row.cells.map((cell, index) => {
-                                    return <Fragment key={index}>{cell.render("Cell")}</Fragment>
-                                })}
-                            </Table.Row>
-                        )
-                    })}
-                </Table.Body>
-            </Table>
-        </TableContainer>
+                <Table
+                    filteringOptions={[]}
+                    enableSearch
+                    handleSearch={setQuery}
+                    searchValue={query}
+                    {...getTableProps()}
+                >
+                    <Table.Head>
+                        {headerGroups?.map((headerGroup) => {
+                            return (
+                                <Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map((col, index) => {
+                                        return (
+                                            <Table.HeadCell
+                                                className="w-[100px]"
+                                                {...col.getHeaderProps()}
+                                            >
+                                                {col.render("Header", {customIndex: index})}
+                                            </Table.HeadCell>
+                                        )
+                                    })}
+                                </Table.HeadRow>
+                            )
+                        })}
+                    </Table.Head>
+                    <Table.Body {...getTableBodyProps()}>
+                        {rows.map((row) => {
+                            prepareRow(row)
+                            return (
+                                <Table.Row
+                                    color={"inherit"}
+                                    linkTo={`/a/policy/${row.original.id}`}
+                                    {...row.getRowProps()}
+                                >
+                                    {row.cells.map((cell, index) => {
+                                        return <Fragment key={index}>{cell.render("Cell")}</Fragment>
+                                    })}
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </TableContainer>
+        </>
+
     )
 }
 

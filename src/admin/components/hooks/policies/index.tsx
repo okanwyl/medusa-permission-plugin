@@ -1,11 +1,12 @@
-import {useAdminCustomQuery} from "medusa-react"
+import {useAdminCustomQuery, useAdminCustomPost} from "medusa-react"
 
-type Policies = {
+export type Policies = {
     name: string,
     handle: string,
     description: string,
     method: string,
     base_router: string,
+    custom_regex: string;
     id: string,
     created_at: string;
     updated_at: string;
@@ -23,7 +24,20 @@ export type AdminPoliciesRes = {
     limit: number;
 };
 
+export type AdminPolicyRes = {
+    policy: Policy
+}
 
+export type AdminPolicyReq = {
+    name: string,
+    description: string,
+    method: string,
+    base_router: string,
+    custom_regex: string
+}
+
+
+export type Policy = Policies;
 type AdminPolicyQueryType = AdminPolicyQuery;
 type AdminPoliciesResType = AdminPoliciesRes;
 
@@ -41,5 +55,49 @@ function useAdminPolicies(queryObject: any) {
         count: data?.count
     };
 }
+
+
+export function useAdminPolicyId(id: string) {
+    const {data, isLoading, isRefetching} = useAdminCustomQuery<
+        AdminPolicyQuery,
+        AdminPolicyRes
+    >(
+        `/policies/${id}`,  // path
+        ["single-policy", id] // queryKey
+    )
+
+
+    return {
+        data,
+        isLoading,
+        isRefetching,
+    };
+
+}
+
+export function mutateAdminPolicy() {
+    const {mutate, isLoading} = useAdminCustomPost<
+        AdminPolicyReq,
+        AdminPolicyRes
+    >(
+        `/policies`,
+        ["policies-r"],
+    )
+
+    return {
+        mutate,
+        isLoading
+    }
+}
+
+
+// const handleCreate = (args: AdminBlogPostReq) => {
+//     return mutate(args, {
+//         onSuccess: (data) => {
+//             navigate(`blog/posts/${data.post.id}`)
+//         },
+//     })
+// }
+//
 
 export default useAdminPolicies;
