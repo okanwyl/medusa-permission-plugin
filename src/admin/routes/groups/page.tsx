@@ -1,10 +1,10 @@
-import { useMemo } from "react";
-import GroupsTable from "../../components/custom/groups/groups-table";
-import BodyCard from "../../components/shared/body-card";
-import PlusIcon from "../../components/shared/icons/plus-icon";
+import { useMemo } from "react"
+import GroupsTable from "../../components/custom/groups/groups-table"
+import BodyCard from "../../components/shared/body-card"
+import PlusIcon from "../../components/shared/icons/plus-icon"
 import { useNavigate } from "react-router-dom"
-import TableViewHeader from "../../components/shared/custom-table/table-view-header";
-import BackButton from "../../components/shared/back-button";
+import TableViewHeader from "../../components/shared/custom-table/table-view-header"
+import BackButton from "../../components/shared/back-button"
 
 type DeletePromptData = {
   resource: string
@@ -13,7 +13,7 @@ type DeletePromptData = {
 }
 
 const GroupsPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const view = "groups"
 
   const actions = useMemo(() => {
@@ -62,4 +62,3 @@ const GroupsPage = () => {
 }
 
 export default GroupsPage
-

@@ -1,25 +1,24 @@
-import { Route, Routes } from "react-router-dom";
-import React, { useMemo, useState } from "react";
-import BodyCard from "../../../shared/body-card";
-import TableViewHeader from "../../../shared/custom-table/table-view-header";
-import PlusIcon from "../../../shared/icons/plus-icon";
-import PoliciesTable from "../../../custom/policies/policies-table";
+import { Route, Routes } from "react-router-dom"
+import { useMemo } from "react"
+import BodyCard from "../../../shared/body-card"
+import TableViewHeader from "../../../shared/custom-table/table-view-header"
+import PlusIcon from "../../../shared/icons/plus-icon"
+import PoliciesTable from "../../../custom/policies/policies-table"
 import {
   CreatePolicyModalProvider,
   CreatePolicyModal,
-  useCreatePolicyModal
-} from "../../../custom/policies/create-new-policy-modal";
-import EditPolicyPage from "../../../../routes/policy/[id]/page";
-import { SettingProps } from "@medusajs/admin";
+  useCreatePolicyModal,
+} from "../../../custom/policies/create-new-policy-modal"
+import EditPolicyPage from "../../../../routes/policy/[id]/page"
+import { SettingProps } from "@medusajs/admin"
 import { useNavigate } from "react-router-dom"
-import GroupsPage from "../../../../routes/groups/page";
+import GroupsPage from "../../../../routes/groups/page"
 
 const PoliciesIndex = ({ notify }: SettingProps) => {
   const navigate = useNavigate()
 
   const view = "policies"
-  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal();
-
+  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal()
 
   const actions = useMemo(() => {
     return [
@@ -33,7 +32,6 @@ const PoliciesIndex = ({ notify }: SettingProps) => {
   }, [view])
 
   return (
-
     <div className="gap-y-xsmall flex h-full grow flex-col">
       <div className="flex w-full grow flex-col">
         <BodyCard

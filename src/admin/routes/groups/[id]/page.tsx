@@ -1,12 +1,11 @@
-
 import { useNavigate, useParams } from "react-router-dom"
-import BodyCard from "../../../components/shared/body-card";
-import Spinner from "../../../components/shared/spinner";
-import BackButton from "../../../components/shared/back-button";
-import moment from "moment";
-import { useAdminGroupPolicyId } from "../../../components/hooks/groups";
+import BodyCard from "../../../components/shared/body-card"
+import Spinner from "../../../components/shared/spinner"
+import BackButton from "../../../components/shared/back-button"
+import moment from "moment"
+import { useAdminGroupPolicyId } from "../../../components/hooks/groups"
 import { FocusModal, ProgressTabs, ProgressStatus } from "@medusajs/ui"
-import { useState, Fragment } from "react"
+import { useState } from "react"
 import Button from "../../../components/shared/button"
 
 enum Tab {
@@ -28,19 +27,16 @@ type DeletePromptData = {
 const EditGroupPolicyPage = () => {
   const { id } = useParams()
 
-
   const { data, isLoading } = useAdminGroupPolicyId(id)
 
   const product = {}
 
-  console.log(typeof data);
-  console.log(data);
+  console.log(typeof data)
+  console.log(data)
   if (data && data.group_policy && data.group_policy.name) {
-    console.log(data.group_policy);
-    console.log(data.group_policy.name);
+    console.log(data.group_policy)
+    console.log(data.group_policy.name)
   }
-
-
 
   const [tab, setTab] = useState<Tab>(Tab.PRODUCTS)
   const [status, setStatus] = useState<StepStatus>({
@@ -48,8 +44,6 @@ const EditGroupPolicyPage = () => {
     [Tab.PRICES]: "not-started",
     [Tab.EDIT]: "not-started",
   })
-
-
 
   const navigate = useNavigate()
 
@@ -89,23 +83,21 @@ const EditGroupPolicyPage = () => {
         <BodyCard className="pt-2xlarge flex w-full items-center justify-center">
           <Spinner size={"large"} variant={"secondary"} />
         </BodyCard>
-
       ) : (
         <div>
           <div className={"flex space-x-4"}>
-
             <BodyCard
               className={"mb-4 min-h-[200px] w-full"}
               title={`Policy ${data.group_policy.name}`}
               subtitle={moment(data.group_policy.created_at).format(
                 "D MMMM YYYY hh:mm a"
               )}
-            // status={<OrderStatusComponent />}
-            // customActionable={
-            // }
-            // forceDropdown={draft_order?.status === "completed" ? false : true}
-            // actionables={
-            // }
+              // status={<OrderStatusComponent />}
+              // customActionable={
+              // }
+              // forceDropdown={draft_order?.status === "completed" ? false : true}
+              // actionables={
+              // }
             >
               <div className="mt-6 flex space-x-6 divide-x">
                 <div className="flex flex-col">
@@ -127,8 +119,7 @@ const EditGroupPolicyPage = () => {
                   {/* <div className="inter-smaller-regular text-grey-50 mb-1"> */}
                   {/*     {data.policy.description} */}
                   {/* </div> */}
-                  <div>
-                  </div>
+                  <div></div>
                 </div>
               </div>
             </BodyCard>
@@ -137,7 +128,7 @@ const EditGroupPolicyPage = () => {
             <FocusModal open={true}>
               <ProgressTabs
                 value={tab}
-              // onValueChange={(tab) => onTabChange(tab as Tab)}
+                // onValueChange={(tab) => onTabChange(tab as Tab)}
               >
                 <FocusModal.Content>
                   <FocusModal.Header className="flex w-full items-center justify-between">
@@ -177,7 +168,7 @@ const EditGroupPolicyPage = () => {
                       <Button
                         // disabled={isSubmitting}
                         variant="secondary"
-                      // onClick={onBack}
+                        // onClick={onBack}
                       >
                         "TEST"TEST
                       </Button>
@@ -185,8 +176,8 @@ const EditGroupPolicyPage = () => {
                         type="button"
                         variant="primary"
                         className="whitespace-nowrap"
-                      // isLoading={isSubmitting}
-                      // onClick={onNext}
+                        // isLoading={isSubmitting}
+                        // onClick={onNext}
                       >
                         NEXTTEST
                       </Button>
@@ -256,13 +247,10 @@ const EditGroupPolicyPage = () => {
               </ProgressTabs>
             </FocusModal>
           </div>
-
         </div>
-      )
-      }
+      )}
     </div>
   )
 }
 
 export default EditGroupPolicyPage
-

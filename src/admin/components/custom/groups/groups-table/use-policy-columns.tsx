@@ -1,72 +1,47 @@
 import moment from "moment"
 import { useMemo } from "react"
-import StatusIndicator from "../../../shared/status-indicator";
+import StatusIndicator from "../../../shared/status-indicator"
 import { Badge, Table } from "@medusajs/ui"
-import Tooltip from "../../../shared/tooltip";
+import Tooltip from "../../../shared/tooltip"
 
 const usePolicyColumn = () => {
   const decideMethod = (status) => {
     switch (status) {
       case "GET":
         return (
-          <Badge
-            color="green"
-            rounded="full"
-          >
+          <Badge color="green" rounded="full">
             {status}
-
           </Badge>
         )
       case "POST":
         return (
-          <Badge
-            color="purple"
-            rounded="full"
-          >
+          <Badge color="purple" rounded="full">
             {status}
-
           </Badge>
         )
       case "DELETE":
         return (
-          <Badge
-            color="red"
-            rounded="full"
-          >
+          <Badge color="red" rounded="full">
             {status}
-
           </Badge>
         )
       case "PUT":
         return (
-          <Badge
-            color="blue"
-            rounded="full"
-          >
+          <Badge color="blue" rounded="full">
             {status}
-
           </Badge>
         )
       case "PATCH":
         return (
-          <Badge
-            color="orange"
-            rounded="full"
-          >
+          <Badge color="orange" rounded="full">
             {status}
-
           </Badge>
         )
       default:
         return (
-
           <Tooltip content={"This is not a valid schema"}>
-            <Badge
-              color="red"
-              rounded="full"
-            >
+            <Badge color="red" rounded="full">
               {status}
-
             </Badge>
           </Tooltip>
         )
@@ -75,22 +50,10 @@ const usePolicyColumn = () => {
 
   const decideCustomRegex = (value) => {
     if (value) {
-      return (
-        <StatusIndicator
-          variant="primary"
-          title={"Defined"}
-        />
-      )
+      return <StatusIndicator variant="primary" title={"Defined"} />
     }
 
-    return (
-      <StatusIndicator
-        variant="warning"
-        title={"Not defined"}
-      />
-    )
-
-
+    return <StatusIndicator variant="warning" title={"Not defined"} />
   }
 
   const columns = useMemo(
@@ -116,7 +79,7 @@ const usePolicyColumn = () => {
       },
     ],
     []
-  );
+  )
 
   return [columns]
 }

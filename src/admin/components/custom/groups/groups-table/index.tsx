@@ -4,15 +4,13 @@ import { usePagination, useTable } from "react-table"
 import TableContainer from "../../../shared/custom-table/table-container"
 import useGroupColumn from "./use-policy-columns"
 import { useGroupFilters } from "./use-policy-filters"
-import Table from "../../../shared/custom-table";
-import useAdminPolicies from "../../../hooks/policies"
+import Table from "../../../shared/custom-table"
 import useAdminGroupPolicies from "../../../../components/hooks/groups"
 
 const DEFAULT_PAGE_SIZE = 15
 
 const GroupsTable = () => {
   const location = useLocation()
-
 
   const {
     reset,
@@ -29,10 +27,9 @@ const GroupsTable = () => {
   const [query, setQuery] = useState(filtersOnLoad?.query)
   const [numPages, setNumPages] = useState(0)
 
-
   // const { data, isLoading, isRefetching, count } = useAdminPolicies(queryObject);
-  const { data, isLoading, isRefetching, count } = useAdminGroupPolicies(queryObject);
-
+  const { data, isLoading, isRefetching, count } =
+    useAdminGroupPolicies(queryObject)
 
   useEffect(() => {
     const controlledPageCount = Math.ceil(count! / queryObject.limit)
@@ -153,7 +150,9 @@ const GroupsTable = () => {
                   {...row.getRowProps()}
                 >
                   {row.cells.map((cell, index) => {
-                    return <Fragment key={index}>{cell.render("Cell")}</Fragment>
+                    return (
+                      <Fragment key={index}>{cell.render("Cell")}</Fragment>
+                    )
                   })}
                 </Table.Row>
               )
@@ -162,7 +161,6 @@ const GroupsTable = () => {
         </Table>
       </TableContainer>
     </>
-
   )
 }
 

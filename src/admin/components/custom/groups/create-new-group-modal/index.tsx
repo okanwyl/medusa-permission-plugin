@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 import {
   FocusModal,
   Input,
@@ -7,128 +7,121 @@ import {
   Button,
   Label,
   RadioGroup,
-  Badge
-} from "@medusajs/ui";
-import { mutateAdminPolicy } from "../../../hooks/policies";
-import { SettingProps } from '@medusajs/admin';
+  Badge,
+} from "@medusajs/ui"
+import { mutateAdminPolicy } from "../../../hooks/policies"
+import { SettingProps } from "@medusajs/admin";
 
 type createPolicyModalContextType = {
-  showNewPolicy: boolean;
-  setShowNewPolicy: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-
-type ErrorsType = {
-  policyName?: string;
-  description?: string;
-  baseRouter?: string;
-  customRegex?: string;
+  showNewPolicy: boolean
+  setShowNewPolicy: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type ErrorsType = {
+  policyName?: string
+  description?: string
+  baseRouter?: string
+  customRegex?: string
+}
 
-const CreatePolicyModalContext = createContext<createPolicyModalContextType | undefined>(undefined);
-
+const CreatePolicyModalContext = createContext<
+  createPolicyModalContextType | undefined
+>(undefined)
 
 export const CreatePolicyModalProvider = ({ children }) => {
-  const [showNewPolicy, setShowNewPolicy] = useState(false);
+  const [showNewPolicy, setShowNewPolicy] = useState(false)
 
   return (
-    <CreatePolicyModalContext.Provider value={{ showNewPolicy, setShowNewPolicy }}>
+    <CreatePolicyModalContext.Provider
+      value={{ showNewPolicy, setShowNewPolicy }}
+    >
       {children}
     </CreatePolicyModalContext.Provider>
-  );
+  )
 };
 
 // 3. Custom hook for convenience
 export const useCreatePolicyModal = () => {
-  return useContext(CreatePolicyModalContext);
+  return useContext(CreatePolicyModalContext)
 };
-
 
 export function CreatePolicyModal({ notify }: SettingProps) {
   // State to store the input value
-  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal();
+  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal()
 
 
-  const [policyName, setPolicyName] = useState('');
-  const [description, setDescription] = useState('');
-  const [method, setMethod] = useState('GET');  // '1' being GET as default
-  const [baseRouter, setBaseRouter] = useState('');
-  const [customRegex, setCustomRegex] = useState('');
+  const [policyName, setPolicyName] = useState("");
+  const [description, setDescription] = useState("");
+  const [method, setMethod] = useState("GET");  // '1' being GET as default
+  const [baseRouter, setBaseRouter] = useState("");
+  const [customRegex, setCustomRegex] = useState("");
 
   const [errors, setErrors] = useState<ErrorsType>({})
 
-  const { mutate, isLoading } = mutateAdminPolicy();
+  const { mutate, isLoading } = mutateAdminPolicy()
 
   const validate = () => {
-    let validationErrors = { ...errors };
+    const validationErrors = { ...errors };
     if (!policyName.trim()) {
-      validationErrors.policyName = "Policy name is required";
+      validationErrors.policyName = "Policy name is required"
     } else {
       delete validationErrors.policyName
     }
 
     if (!baseRouter.trim()) {
-      validationErrors.baseRouter = "Base router is required.";
+      validationErrors.baseRouter = "Base router is required."
     } else if (!/^[a-zA-Z0-9]+$/.test(baseRouter)) {
-      validationErrors.baseRouter = "Base router should only contain letters and numbers.";
+      validationErrors.baseRouter =
+        "Base router should only contain letters and numbers."
     } else {
       delete validationErrors.baseRouter
     }
 
-    setErrors(validationErrors);
-    return Object.keys(validationErrors).length === 0; // Return true if no errors
+    setErrors(validationErrors)
+    return Object.keys(validationErrors).length === 0 // Return true if no errors
 
   }
 
 
   const clearAllStates = () => {
-
-    setPolicyName('');
-    setDescription('');
-    setMethod('GET');
-    setBaseRouter('');
-    setCustomRegex('');
+    setPolicyName("")
+    setDescription("");
+    setMethod("GET");
+    setBaseRouter("");
+    setCustomRegex("");
     setErrors({})
-
   }
 
   const handleSave = async () => {
-
     if (!validate()) {
-      return;
+      return
     }
 
 
-    const args = ({
+    const args = {
       name: policyName,
       description: description,
       method: method,
       base_router: baseRouter,
-      custom_regex: customRegex
+      custom_regex: customRegex,
     })
 
     return mutate(args, {
       onSuccess: (data) => {
-        clearAllStates();
-        setShowNewPolicy(false);
+        clearAllStates()
+        setShowNewPolicy(false)
         notify.success("success", "Successfully created policy")
       },
 
-
       onError: (data) => {
-        if (
-          data.message.includes("422")
-        ) {
+        if (data.message.includes("422")) {
           notify.error("error", "This policy name already exists.")
         } else {
           notify.error("error", "Something happened")
         }
-      }
+      },
     })
-
-  };
-
+  }
 
   return (
     <FocusModal
@@ -137,12 +130,14 @@ export function CreatePolicyModal({ notify }: SettingProps) {
         if (!isOpen) {
           clearAllStates()
         }
-        setShowNewPolicy(isOpen);
+        setShowNewPolicy(isOpen)
       }}
     >
       <FocusModal.Content>
         <FocusModal.Header>
-          <Button variant='primary' isLoading={isLoading} onClick={handleSave}>Save</Button>
+          <Button variant="primary" isLoading={isLoading} onClick={handleSave}>
+            Save
+          </Button>
         </FocusModal.Header>
         <FocusModal.Body className="flex flex-col items-center py-16">
           <div className="flex w-full max-w-lg flex-col gap-y-8">
@@ -161,10 +156,11 @@ export function CreatePolicyModal({ notify }: SettingProps) {
                 id="policy_name"
                 placeholder="Create Product Policy"
                 onChange={(e) => setPolicyName(e.target.value)}
-                style={errors.policyName ? { borderColor: 'red' } : {}}
+                style={errors.policyName ? { borderColor: "red" } : {}}
               />
-              {errors.policyName && <div style={{ color: 'red' }}>{errors.policyName}</div>}
-
+              {errors.policyName && (
+                <div style={{ color: "red" }}>{errors.policyName}</div>
+              )}
             </div>
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="description" className="text-ui-fg-subtle">
@@ -174,65 +170,70 @@ export function CreatePolicyModal({ notify }: SettingProps) {
                 id="description"
                 placeholder="Manages creating product workflow, if is this attached policy group can create products"
                 onChange={(e) => setDescription(e.target.value)}
-                style={errors.description ? { borderColor: 'red' } : {}}
+                style={errors.description ? { borderColor: "red" } : {}}
               />
-              {errors.description && <div style={{ color: 'red' }}>{errors.description}</div>}
-
+              {errors.description && (
+                <div style={{ color: "red" }}>{errors.description}</div>
+              )}
             </div>
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="method" className="text-ui-fg-subtle">
                 Method
               </Label>
 
-              <RadioGroup value={method} onChange={(value) => {
-              }}>
+              <RadioGroup value={method} onChange={(value) => {}}>
                 <div className="flex items-center gap-x-3">
-                  <RadioGroup.Item value="GET" id="radio_1" onClick={() => setMethod('GET')} />
+                  <RadioGroup.Item
+                    value="GET"
+                    id="radio_1"
+                    onClick={() => setMethod("GET")}
+                  />
 
-                  <Badge
-                    color="green"
-                    rounded="full"
-                  >
+                  <Badge color="green" rounded="full">
                     GET
                   </Badge>
                 </div>
                 <div className="flex items-center gap-x-3">
-                  <RadioGroup.Item value="POST" id="radio_2" onClick={() => setMethod('POST')} />
-                  {/*<Label htmlFor="radio_2" weight="plus">*/}
+                  <RadioGroup.Item
+                    value="POST"
+                    id="radio_2"
+                    onClick={() => setMethod("POST")}
+                  />
+                  {/* <Label htmlFor="radio_2" weight="plus">*/}
                   {/*    Radio 2*/}
-                  {/*</Label>*/}
+                  {/* </Label>*/}
 
-                  <Badge
-                    color="purple"
-                    rounded="full"
-                  >
+                  <Badge color="purple" rounded="full">
                     POST
                   </Badge>
                 </div>
                 <div className="flex items-center gap-x-3">
-                  <RadioGroup.Item value="DELETE" id="radio_3" onClick={() => setMethod('DELETE')} />
-                  <Badge
-                    color="red"
-                    rounded="full"
-                  >
+                  <RadioGroup.Item
+                    value="DELETE"
+                    id="radio_3"
+                    onClick={() => setMethod("DELETE")}
+                  />
+                  <Badge color="red" rounded="full">
                     DELETE
                   </Badge>
                 </div>
                 <div className="flex items-center gap-x-3">
-                  <RadioGroup.Item value="PUT" id="radio_4" onClick={() => setMethod('PUT')} />
-                  <Badge
-                    color="blue"
-                    rounded="full"
-                  >
+                  <RadioGroup.Item
+                    value="PUT"
+                    id="radio_4"
+                    onClick={() => setMethod("PUT")}
+                  />
+                  <Badge color="blue" rounded="full">
                     PUT
                   </Badge>
                 </div>
                 <div className="flex items-center gap-x-3">
-                  <RadioGroup.Item value="PATCH" id="radio_5" onClick={() => setMethod('PATCH')} />
-                  <Badge
-                    color="orange"
-                    rounded="full"
-                  >
+                  <RadioGroup.Item
+                    value="PATCH"
+                    id="radio_5"
+                    onClick={() => setMethod("PATCH")}
+                  />
+                  <Badge color="orange" rounded="full">
                     PATCH
                   </Badge>
                 </div>
@@ -250,31 +251,33 @@ export function CreatePolicyModal({ notify }: SettingProps) {
                 id="base_router"
                 placeholder="products"
                 onChange={(e) => setBaseRouter(e.target.value)}
-                style={errors.baseRouter ? { borderColor: 'red' } : {}}
+                style={errors.baseRouter ? { borderColor: "red" } : {}}
               />
-              {errors.baseRouter && <div style={{ color: 'red' }}>{errors.baseRouter}</div>}
-
+              {errors.baseRouter && (
+                <div style={{ color: "red" }}>{errors.baseRouter}</div>
+              )}
             </div>
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="custom_regex" className="text-ui-fg-subtle">
                 Regex(optional)
               </Label>
               <Text className="text-ui-fg-subtle">
-                Create custom regex for your policy. You can use that as a permission requirement.
+                Create custom regex for your policy. You can use that as a
+                permission requirement.
               </Text>
               <Input
                 id="custom_regex"
                 placeholder="^id_\d+$"
                 onChange={(e) => setCustomRegex(e.target.value)}
-                style={errors.customRegex ? { borderColor: 'red' } : {}}
+                style={errors.customRegex ? { borderColor: "red" } : {}}
               />
-              {errors.customRegex && <div style={{ color: 'red' }}>{errors.customRegex}</div>}
-
+              {errors.customRegex && (
+                <div style={{ color: "red" }}>{errors.customRegex}</div>
+              )}
             </div>
           </div>
-
         </FocusModal.Body>
       </FocusModal.Content>
     </FocusModal>
-  );
+  )
 }
