@@ -104,7 +104,7 @@ export function CreatePolicyModal({ notify }: SettingProps) {
       method: method,
       base_router: baseRouter,
       custom_regex: customRegex,
-    })
+    }
 
     return mutate(args, {
       onSuccess: (data) => {
