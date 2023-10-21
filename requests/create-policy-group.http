@@ -1,11 +1,7 @@
-POST http://localhost:9000/admin/policy-groups/policy_group_01HCYTCPQ84XC4DZNVBSE317SS
+POST http://localhost:9000/admin/policy-groups/
 Content-Type: application/json
 
 {
-  "policies": [
-    {
-      "id": "policy_01HCYJ0DZH39ZSAB1JQ1SQK4XZ"
-    }
-  ]
+  "name": "Admins"
 }
 
