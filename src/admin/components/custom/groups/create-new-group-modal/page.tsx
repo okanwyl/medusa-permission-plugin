@@ -15,17 +15,17 @@ import { useTranslation } from "react-i18next"
 import {
     GroupPoliciesPoliciesForm,
     groupPoliciesPoliciesSchema
-} from "../../../components/custom/groups/forms/group-policies-policies-form";
-import { Form } from "../../../components/shared/form"
-import {nestedForm} from "../../../components/shared/form/nested-form";
-import {useParams} from "react-router-dom";
-import {mutateGroupAdminPolicy} from "../../../components/hooks/groups";
-import {groupPoliciesDetailsSchema, GroupPolicyDetailsForm, PriceListStatus} from "../../../components/custom/groups/forms/group-policy-details-form";
+} from "../forms/group-policies-policies-form";
+import { Form } from "../../../shared/form"
+import {nestedForm} from "../../../shared/form/nested-form";
+import {mutateGroupAdminPolicy} from "../../../hooks/groups";
+import {groupPoliciesDetailsSchema, GroupPolicyDetailsForm, PriceListStatus} from "../forms/group-policy-details-form";
 import {
     GroupPoliciesUsersForm,
     groupPoliciesUsersSchema
-} from "../../../components/custom/groups/forms/group-policies-users-form";
+} from "../forms/group-policies-users-form";
 import {ExclamationCircle, Spinner } from "@medusajs/icons"
+import {createContext, useContext, useState} from "react";
 
 
 enum Tab {
@@ -47,8 +47,7 @@ type StepStatus = {
     [key in Tab]: ProgressStatus
 }
 
-const PriceListNew = () => {
-    const {id} = useParams();
+const CreateNewGroupModal = () => {
     const [open, setOpen] = React.useState(false)
 
     const [selectedIds, setSelectedIds] = React.useState<string[]>([])
@@ -308,8 +307,9 @@ const PriceListNew = () => {
         }
     }, [tab, t])
 
+
     return (
-        <FocusModal open={open} onOpenChange={onModalStateChange} defaultOpen={true}>
+        <FocusModal open={open} onOpenChange={onModalStateChange}>
             <FocusModal.Trigger asChild>
                 <Button variant="secondary">Create New</Button>
             </FocusModal.Trigger>
@@ -419,4 +419,4 @@ const PriceListNew = () => {
     )
 }
 
-export default PriceListNew
+export default CreateNewGroupModal
