@@ -80,7 +80,7 @@ export function mutateGroupAdminPolicy() {
 
   return {
     mutate,
-    isLoadingSecond: isLoading,
+    isLoading,
     isError,
     isSuccess,
     isIdle,

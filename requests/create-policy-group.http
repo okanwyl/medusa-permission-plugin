@@ -1,4 +1,4 @@
-POST http://localhost:9000/admin/policy-groups/
+GET http://localhost:9000/admin/policy-groups/
 Content-Type: application/json
 
 {

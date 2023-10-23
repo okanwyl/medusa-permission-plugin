@@ -1,10 +1,8 @@
-import { ExclamationCircle, PhotoSolid, Spinner } from "@medusajs/icons"
+import { ExclamationCircle,  Spinner } from "@medusajs/icons"
 import type {Product, User} from "@medusajs/medusa"
 import {
   Checkbox,
   Heading,
-  Input,
-  StatusBadge,
   Table,
   Text,
   clx,
@@ -297,16 +295,7 @@ const GroupPoliciesUsersForm = ({
           </Table.Body>
         </Table>
       </div>
-      <Table.Pagination
-        count={0}
-        canNextPage={table.getCanNextPage()}
-        canPreviousPage={table.getCanPreviousPage()}
-        nextPage={table.nextPage}
-        previousPage={table.previousPage}
-        pageIndex={pagination.pageIndex}
-        pageCount={0}
-        pageSize={pagination.pageSize}
-      />
+
     </div>
   )
 }

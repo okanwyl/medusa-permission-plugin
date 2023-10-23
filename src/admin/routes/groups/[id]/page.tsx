@@ -10,45 +10,34 @@ import {
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
 import { Product } from "@medusajs/medusa"
-
-
-
 import { useTranslation } from "react-i18next"
 import {
     GroupPoliciesPoliciesForm,
     groupPoliciesPoliciesSchema
 } from "../../../components/custom/groups/forms/group-policies-policies-form";
-import {PriceListPricesForm, priceListPricesSchema, usePricesFormData} from "../../../components/custom/groups/forms/price-list-prices-form";
-import {
-    PriceListProductPricesForm,
-    priceListProductPricesSchema,
-    PriceListProductPricesSchema
-} from "../../../components/custom/groups/forms/price-list-product-prices-form";
 import { Form } from "../../../components/shared/form"
 import {nestedForm} from "../../../components/shared/form/nested-form";
 import {useParams} from "react-router-dom";
 import {mutateGroupAdminPolicy} from "../../../components/hooks/groups";
-import {ExclamationCircle, Spinner } from "@medusajs/icons"
 import {groupPoliciesDetailsSchema, GroupPolicyDetailsForm, PriceListStatus} from "../../../components/custom/groups/forms/group-policy-details-form";
 import {
     GroupPoliciesUsersForm,
     groupPoliciesUsersSchema
 } from "../../../components/custom/groups/forms/group-policies-users-form";
+import {ExclamationCircle, Spinner } from "@medusajs/icons"
 
 
 enum Tab {
     DETAILS = "details",
-    PRODUCTS = "products",
-    PRICES = "prices",
-    EDIT = "edit",
+    POLICIES = "products",
+    USERS = "prices",
 }
 
 const priceListNewSchema = z.object({
     details: groupPoliciesDetailsSchema,
     products: groupPoliciesPoliciesSchema,
-    prices: priceListPricesSchema,
+    // prices: priceListPricesSchema,
     users: groupPoliciesUsersSchema
 })
 
@@ -61,36 +50,25 @@ type StepStatus = {
 const PriceListNew = () => {
     const {id} = useParams();
     const [open, setOpen] = React.useState(false)
-    const [product, setProduct] = React.useState<Product | null>(null)
 
     const [selectedIds, setSelectedIds] = React.useState<string[]>([])
 
     const [tab, setTab] = React.useState<Tab>(Tab.DETAILS)
     const [status, setStatus] = React.useState<StepStatus>({
         [Tab.DETAILS]: "not-started",
-        [Tab.PRODUCTS]: "not-started",
-        [Tab.PRICES]: "not-started",
-        [Tab.EDIT]: "not-started",
+        [Tab.POLICIES]: "not-started",
+        [Tab.USERS]: "not-started",
     })
 
     const { t } = useTranslation()
 
-    const promptTitle = t("price-list-new-form-prompt-title", "Are you sure?")
-    const promptExitDescription = t(
-        "price-list-new-form-prompt-exit-description",
-        "You have unsaved changes, are you sure you want to exit?"
-    )
-    const promptBackDescription = t(
-        "price-list-new-form-prompt-back-description",
-        "You have unsaved changes, are you sure you want to go back?"
-    )
+    const promptTitle =  "Are you sure?"
+    const promptExitDescription = "You have unsaved changes, are you sure you want to exit?"
+
+    const promptBackDescription = "You have unsaved changes, are you sure you want to go back?"
+
 
     const prompt = usePrompt()
-    // const useNotification = (...asd: string) => {return "returned by notificaiton"}
-    // const notification = useNotification()
-
-    // const { isFeatureEnabled } = useFeatureFlag()
-    // const isTaxInclPricesEnabled = isFeatureEnabled("tax_inclusive_pricing")
 
     const form = useForm<PriceListNewSchema>({
         resolver: zodResolver(priceListNewSchema),
@@ -104,9 +82,6 @@ const PriceListNew = () => {
             products: {
                 ids: [],
             },
-            prices: {
-                products: {},
-            },
             users: {
                 ids: []
             }
@@ -117,35 +92,17 @@ const PriceListNew = () => {
         trigger,
         reset,
         getValues,
-        setValue,
         setError,
         handleSubmit,
         formState: { isDirty },
     } = form
 
-    // const taxToggleState = useWatch({
-    //     control: form.control,
-    //     name: "details.general.tax_inclusive",
-    //     defaultValue: false,
-    // })
 
-    const {
-        control: editControl,
-        handleSubmit: handleEditSubmit,
-        reset: resetEdit,
-        formState: { isDirty: isEditDirty },
-        setValue: setEditValue,
-        getValues: getEditValues,
-    } = useForm<PriceListProductPricesSchema>({
-        resolver: zodResolver(priceListProductPricesSchema),
-    })
 
-    const { mutate, isLoadingSecond } = mutateGroupAdminPolicy()
 
-    const { isLoading , isError, isNotFound, regions, currencies } =
-        usePricesFormData({
-            productIds: selectedIds,
-        })
+    const { mutate, isLoading, isError } = mutateGroupAdminPolicy()
+
+
 
     const onCloseModal = React.useCallback(() => {
         setOpen(false)
@@ -153,17 +110,16 @@ const PriceListNew = () => {
         setSelectedIds([])
         setStatus({
             [Tab.DETAILS]: "not-started",
-            [Tab.PRODUCTS]: "not-started",
-            [Tab.PRICES]: "not-started",
-            [Tab.EDIT]: "not-started",
+            [Tab.POLICIES]: "not-started",
+            [Tab.USERS]: "not-started",
         })
-        resetEdit()
+        // resetEdit()
         reset()
-    }, [reset, resetEdit])
+    }, [reset])
 
     const onModalStateChange = React.useCallback(
         async (open: boolean) => {
-            if (!open && (isDirty || isEditDirty)) {
+            if (!open && (isDirty)) {
                 const response = await prompt({
                     title: promptTitle,
                     description: promptExitDescription,
@@ -181,7 +137,6 @@ const PriceListNew = () => {
         },
         [
             isDirty,
-            isEditDirty,
             promptTitle,
             promptExitDescription,
             prompt,
@@ -189,58 +144,25 @@ const PriceListNew = () => {
         ]
     )
 
-    /**
-     * On hitting "Save Prices" in the edit tab, we need
-     * to update the corresponding product in the form.
-     */
-    const onSavePriceEdit = handleEditSubmit((data) => {
-        if (!product) {
-            return
-        }
-
-        setValue(`prices.products.${product.id}`, data, {
-            shouldDirty: true,
-            shouldTouch: true,
-        })
-
-        setProduct(null)
-        resetEdit(undefined, {
-            keepDirty: false,
-            keepTouched: false,
-        })
-        setTab(Tab.PRICES)
-    })
 
     const onSubmit = React.useCallback(
-        async (status: PriceListStatus) => {
+        async () => {
             await handleSubmit(async (data) => {
-                const productPriceKeys = Object.keys(data.prices.products)
                 const productIds = data.products.ids
                 const payloadPolicies = []
                 productIds.forEach((payloadId) => {
                     payloadPolicies.push({id:payloadId })
                 });
 
-                const missingProducts = productIds.filter(
-                    (id) => !productPriceKeys.includes(id)
-                )
 
-                if (missingProducts.length > 0) {
                     const res = await prompt({
-                        title: t(
-                            "price-list-new-form-missing-prices-title",
-                            "Incomplete price list"
-                        ),
-                        description: t(
-                            "price-list-new-products-modal-missing-prices-description",
-                            "Prices have not been assigned to all of your chosen products. Would you like to proceed?"
-                        ),
+                        title: "Are you sure?",
+                        description: "You are going to create a group policy and give selected users the permissions."
                     })
 
                     if (!res) {
                         return
                     }
-                }
 
 
                 mutate(
@@ -262,60 +184,13 @@ const PriceListNew = () => {
         [
             handleSubmit,
             mutate,
-            // notification,
             onCloseModal,
             setError,
             prompt,
             t,
-            // isTaxInclPricesEnabled,
-            // regions,
         ]
     )
 
-    const onSetProduct = React.useCallback(
-        (product: Product | null) => {
-            if (!product) {
-                setProduct(null)
-                setTab(Tab.PRICES)
-                return
-            }
-
-            const defaultValues = getValues(`prices.products.${product.id}`)
-            resetEdit(defaultValues)
-            setProduct(product)
-            setTab(Tab.EDIT)
-        },
-        [resetEdit, getValues]
-    )
-
-    /**
-     * When exiting the "Edit" tab, we need to check
-     * if the user has unsaved changes. If they do,
-     * we need to prompt them whether they want to
-     * continue or not.
-     */
-    const onExitProductPrices = React.useCallback(
-        async (tab = Tab.PRICES) => {
-            if (isEditDirty) {
-                const res = await prompt({
-                    title: promptTitle,
-                    description: promptBackDescription,
-                })
-
-                if (!res) {
-                    return
-                }
-            }
-
-            setTab(tab)
-            setProduct(null)
-            resetEdit(undefined, {
-                keepDirty: false,
-                keepTouched: false,
-            })
-        },
-        [prompt, resetEdit, isEditDirty, promptTitle, promptBackDescription]
-    )
 
     /**
      * If the current tab is edit, we need to
@@ -325,39 +200,14 @@ const PriceListNew = () => {
      */
     const onTabChange = React.useCallback(
         async (value: Tab) => {
-            if (tab === Tab.EDIT) {
-                await onExitProductPrices(value)
-                return
-            }
+
 
             setTab(value)
         },
-        [tab, onExitProductPrices]
+        [tab]
     )
 
-    /**
-     * Callback for ensuring that we don't submit prices
-     * for products that the user has unselected.
-     */
-    const onUpdateSelectedProductIds = React.useCallback(
-        (ids: string[]) => {
-            setSelectedIds((prev) => {
-                /**
-                 * If the previous ids are the same as the new ids,
-                 * we need to unregister the old ids that are no
-                 * longer selected.
-                 */
-                for (const id of prev) {
-                    if (!ids.includes(id)) {
-                        setValue(`prices.products.${id}`, { variants: {} })
-                    }
-                }
 
-                return ids
-            })
-        },
-        [setValue]
-    )
 
     /**
      * Callback for validating the details form.
@@ -374,7 +224,7 @@ const PriceListNew = () => {
             return
         }
 
-        setTab(Tab.PRODUCTS)
+        setTab(Tab.POLICIES)
         setStatus((prev) => ({
             ...prev,
             [Tab.DETAILS]: "completed",
@@ -390,7 +240,7 @@ const PriceListNew = () => {
         if (!result) {
             setStatus((prev) => ({
                 ...prev,
-                [Tab.PRODUCTS]: "in-progress",
+                [Tab.POLICIES]: "in-progress",
             }))
 
             return
@@ -398,14 +248,13 @@ const PriceListNew = () => {
 
         const ids = getValues("products.ids")
 
-        onUpdateSelectedProductIds(ids)
 
-        setTab(Tab.PRICES)
+        setTab(Tab.USERS)
         setStatus((prev) => ({
             ...prev,
-            [Tab.PRODUCTS]: "completed",
+            [Tab.POLICIES]: "completed",
         }))
-    }, [trigger, getValues, onUpdateSelectedProductIds])
+    }, [trigger, getValues])
 
     /**
      * Depending on the current tab, the next button
@@ -416,59 +265,46 @@ const PriceListNew = () => {
             case Tab.DETAILS:
                 await onValidateDetails()
                 break
-            case Tab.PRODUCTS:
+            case Tab.POLICIES:
                 await onValidateProducts()
                 break
-            case Tab.PRICES:
-                await onSubmit(PriceListStatus.ACTIVE)
-                break
-            case Tab.EDIT:
-                await onSavePriceEdit()
+            case Tab.USERS:
+                await onSubmit()
                 break
         }
-    }, [onValidateDetails, onValidateProducts, onSubmit, onSavePriceEdit, tab])
+    }, [onValidateDetails, onValidateProducts, onSubmit, tab])
 
     const nextButtonText = React.useMemo(() => {
         switch (tab) {
-            case Tab.PRICES:
-                return t(
-                    "price-list-new-form-next-button-save-and-publish",
-                    "Save and Publish"
-                )
-            case Tab.EDIT:
-                return t("price-list-new-form-next-button-save", "Save Prices")
+            case Tab.USERS:
+                return "Save"
             default:
-                return t("price-list-new-form-next-button-continue", "Continue")
+                return "Continue"
         }
     }, [tab, t])
 
-    /**
-     * Depending on the current tab, the back button
-     * will have different functionality.
-     */
+
     const onBack = React.useCallback(async () => {
         switch (tab) {
             case Tab.DETAILS:
                 await onModalStateChange(false)
                 break
-            case Tab.PRODUCTS:
+            case Tab.POLICIES:
                 setTab(Tab.DETAILS)
                 break
-            case Tab.PRICES:
-                setTab(Tab.PRODUCTS)
+            case Tab.USERS:
+                setTab(Tab.POLICIES)
                 break
-            case Tab.EDIT:
-                await onExitProductPrices()
-                break
+
         }
-    }, [onModalStateChange, onExitProductPrices, tab])
+    }, [onModalStateChange, tab])
 
     const backButtonText = React.useMemo(() => {
         switch (tab) {
             case Tab.DETAILS:
-                return t("price-list-new-form-back-button-cancel", "Cancel")
+                return "Cancel"
             default:
-                return t("price-list-new-form-back-button-back", "Back")
+                return  "Back"
         }
     }, [tab, t])
 
@@ -494,40 +330,28 @@ const PriceListNew = () => {
                 </span>
                             </ProgressTabs.Trigger>
                             <ProgressTabs.Trigger
-                                value={Tab.PRODUCTS}
+                                value={Tab.POLICIES}
                                 disabled={status[Tab.DETAILS] !== "completed"}
                                 className="w-full min-w-0  max-w-[200px]"
-                                status={status[Tab.PRODUCTS]}
+                                status={status[Tab.POLICIES]}
                             >
                 <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
                   {"Attach Policies"}
                 </span>
                             </ProgressTabs.Trigger>
                             <ProgressTabs.Trigger
-                                value={Tab.PRICES}
+                                value={Tab.USERS}
                                 disabled={
                                     status[Tab.DETAILS] !== "completed" &&
-                                    status[Tab.PRODUCTS] !== "completed"
+                                    status[Tab.POLICIES] !== "completed"
                                 }
                                 className="w-full min-w-0 max-w-[200px]"
-                                status={status[Tab.PRICES]}
+                                status={status[Tab.USERS]}
                             >
                 <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                  {t("price-list-new-form-prices-tab", "Edit Prices")}
+                  {"Attach Users"}
                 </span>
                             </ProgressTabs.Trigger>
-                            {product && (
-                                <ProgressTabs.Trigger
-                                    value={Tab.EDIT}
-                                    disabled={isLoading}
-                                    className="w-full min-w-0 max-w-[200px]"
-                                    status={isEditDirty ? "in-progress" : "not-started"}
-                                >
-                  <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                    {product?.title}
-                  </span>
-                                </ProgressTabs.Trigger>
-                            )}
                         </ProgressTabs.List>
                         <div className="ml-auto flex items-center justify-end gap-x-2">
                             <Button
@@ -537,11 +361,6 @@ const PriceListNew = () => {
                             >
                                 {backButtonText}
                             </Button>
-                            {tab === Tab.PRICES && !isLoading && (
-                                <Button onClick={() => onSubmit(PriceListStatus.DRAFT)}>
-                                    {t("price-list-new-form-save-as-draft", "Save as Draft")}
-                                </Button>
-                            )}
                             <Button type="button" onClick={onNext} isLoading={isLoading}>
                                 {nextButtonText}
                             </Button>
@@ -563,60 +382,32 @@ const PriceListNew = () => {
                                     </div>
                                 </ProgressTabs.Content>
                                 <ProgressTabs.Content
-                                    value={Tab.PRODUCTS}
+                                    value={Tab.POLICIES}
                                     className="h-full w-full"
                                 >
                                     <GroupPoliciesPoliciesForm form={nestedForm(form, "products")} />
                                 </ProgressTabs.Content>
-                                {/*<GroupPoliciesUsersForm form={nestedForm(form,"users")}/>*/}
-
                                 {isLoading ? (
                                     <div className="flex h-full w-full items-center justify-center">
                                         <Spinner className="text-ui-fg-subtle animate-spin" />
                                     </div>
-                                ) : isError || isNotFound ? (
+                                ) : isError ? (
                                     <div className="flex h-full w-full items-center justify-center">
                                         <div className="text-ui-fg-subtle flex items-center gap-x-2">
                                             <ExclamationCircle />
                                             <Text>
-                                                {t(
-                                                    "price-list-new-form-error-loading-products",
-                                                    "An error occurred while preparing the form. Reload the page and try again. If the issue persists, try again later."
-                                                )}
+                                                {"An error occurred while preparing the form. Reload the page and try again. If the issue persists, try again later."}
                                             </Text>
                                         </div>
                                     </div>
                                 ) : (
                                     <React.Fragment>
                                         <ProgressTabs.Content
-                                            value={Tab.PRICES}
+                                            value={Tab.USERS}
                                             className="h-full w-full"
                                         >
-                                            {/*<PriceListPricesForm*/}
-                                            {/*    setProduct={onSetProduct}*/}
-                                            {/*    form={nestedForm(form, "prices")}*/}
-                                            {/*    productIds={selectedIds}*/}
-                                            {/*/>*/}
                                             <GroupPoliciesUsersForm form={nestedForm(form,"users")}/>
-
                                         </ProgressTabs.Content>
-                                        {product && (
-                                            <ProgressTabs.Content
-                                                value={Tab.EDIT}
-                                                className="h-full w-full"
-                                            >
-                                                {/*<PriceListProductPricesForm*/}
-                                                {/*    taxInclEnabled={false}*/}
-                                                {/*    product={product}*/}
-                                                {/*    currencies={currencies}*/}
-                                                {/*    regions={regions}*/}
-                                                {/*    control={editControl}*/}
-                                                {/*    getValues={getEditValues}*/}
-                                                {/*    setValue={setEditValue}*/}
-                                                {/*/>*/}
-                                                <GroupPoliciesUsersForm form={nestedForm(form,"users")}/>
-                                            </ProgressTabs.Content>
-                                        )}
                                     </React.Fragment>
                                 )}
                             </Form>
