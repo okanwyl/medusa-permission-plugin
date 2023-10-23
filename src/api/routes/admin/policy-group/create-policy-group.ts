@@ -34,7 +34,7 @@ export default async (req: Request, res: Response) => {
     relations: defaultAdminPolicyGroupRelations,
   })
 
-  res.status(200).json({ policiesGroup })
+  res.status(200).json({ group_policy: policiesGroup })
 }
 
 export class AdminPoliciesGroupReq {

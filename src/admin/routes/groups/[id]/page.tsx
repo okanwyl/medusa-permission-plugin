@@ -18,7 +18,7 @@ import { useAdminCreatePriceList } from "medusa-react"
 
 
 import { useTranslation } from "react-i18next"
-import {PriceListDetailsForm, priceListDetailsSchema, PriceListStatus, PriceListType} from "../../../components/custom/groups/forms/price-list-details-form";
+import {PriceListDetailsForm, groupPoliciesDetailsSchema, PriceListStatus, PriceListType} from "../../../components/custom/groups/forms/price-list-details-form";
 import {
     PriceListProductsForm,
     priceListProductsSchema
@@ -32,6 +32,7 @@ import {
 import { Form } from "../../../components/shared/form"
 import {nestedForm} from "../../../components/shared/form/nested-form";
 import {useParams} from "react-router-dom";
+import {mutateGroupAdminPolicy} from "../../../components/hooks/groups";
 
 
 enum Tab {
@@ -42,7 +43,7 @@ enum Tab {
 }
 
 const priceListNewSchema = z.object({
-    details: priceListDetailsSchema,
+    details: groupPoliciesDetailsSchema,
     products: priceListProductsSchema,
     prices: priceListPricesSchema,
 })
@@ -91,20 +92,9 @@ const PriceListNew = () => {
         resolver: zodResolver(priceListNewSchema),
         defaultValues: {
             details: {
-                type: {
-                    value: "sale",
-                },
                 general: {
                     name: "",
                     description: "",
-                    tax_inclusive: false,
-                },
-                customer_groups: {
-                    ids: [],
-                },
-                dates: {
-                    ends_at: null,
-                    starts_at: null,
                 },
             },
             products: {
@@ -126,11 +116,11 @@ const PriceListNew = () => {
         formState: { isDirty },
     } = form
 
-    const taxToggleState = useWatch({
-        control: form.control,
-        name: "details.general.tax_inclusive",
-        defaultValue: false,
-    })
+    // const taxToggleState = useWatch({
+    //     control: form.control,
+    //     name: "details.general.tax_inclusive",
+    //     defaultValue: false,
+    // })
 
     const {
         control: editControl,
@@ -143,7 +133,7 @@ const PriceListNew = () => {
         resolver: zodResolver(priceListProductPricesSchema),
     })
 
-    const { mutateAsync, isLoading: isSubmitting } = useAdminCreatePriceList()
+    const { mutateAsync, isLoading: isSubmitting } = mutateGroupAdminPolicy()
 
     const { isLoading, isError, isNotFound, regions, currencies } =
         usePricesFormData({
@@ -328,17 +318,7 @@ const PriceListNew = () => {
                     {
                         name: data.details.general.name,
                         description: data.details.general.description,
-                        type: data.details.type.value as PriceListType,
-                        // includes_tax: isTaxInclPricesEnabled
-                        //     ? data.details.general.tax_inclusive
-                        //     : undefined,
-                        customer_groups: data.details.customer_groups.ids.map((id) => ({
-                            id,
-                        })),
-                        status: status,
-                        ends_at: data.details.dates.ends_at || undefined,
-                        starts_at: data.details.dates.starts_at || undefined,
-                        prices,
+                        policies: [],
                     },
                     {
                         onSuccess: () => {
@@ -582,7 +562,7 @@ const PriceListNew = () => {
                                 status={status[Tab.DETAILS]}
                             >
                 <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                  {t("price-list-new-form-details-tab", "Create Price List")}
+                  {"Create Group Policy"}
                 </span>
                             </ProgressTabs.Trigger>
                             <ProgressTabs.Trigger
@@ -694,7 +674,6 @@ const PriceListNew = () => {
                                                 className="h-full w-full"
                                             >
                                                 <PriceListProductPricesForm
-                                                    priceListTaxInclusive={taxToggleState}
                                                     taxInclEnabled={false}
                                                     product={product}
                                                     currencies={currencies}

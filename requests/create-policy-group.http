@@ -2,6 +2,6 @@ POST http://localhost:9000/admin/policy-groups/
 Content-Type: application/json
 
 {
-  "name": "Admins2"
+  "name": "Admins5"
 }
 

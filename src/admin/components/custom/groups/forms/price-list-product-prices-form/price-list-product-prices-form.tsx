@@ -46,7 +46,6 @@ type BulkEditorProps = {
     currencies: Currency[]
     control: Control<PriceListProductPricesSchema>
     taxInclEnabled?: boolean
-    priceListTaxInclusive?: boolean
     setValue: UseFormSetValue<PriceListProductPricesSchema>
     getValues: UseFormGetValues<PriceListProductPricesSchema>
 }
@@ -59,13 +58,12 @@ const PriceListProductPricesForm = ({
                                         currencies,
                                         control,
                                         taxInclEnabled,
-                                        priceListTaxInclusive,
                                         setValue,
                                         getValues,
                                     }: BulkEditorProps) => {
     const {t} = useTranslation()
-    const useNotification = () => {
-        "returned by notification"
+    const useNotification = (...anyString:string[]) => {
+        (anyString) => {console.log(anyString)}
     };
     const notification = useNotification()
 
@@ -1009,17 +1007,9 @@ const PriceListProductPricesForm = ({
             const isInvalid = next.some((row) => row.some((val) => isNaN(+val)))
 
             if (isInvalid) {
-                notification(
-                    t(
-                        "price-list-product-prices-form-invalid-data-title",
-                        "Invalid data"
-                    ),
-                    t(
-                        "price-list-product-prices-form-invalid-data-body",
-                        "The data you pasted contains values that are not numbers."
-                    ),
-                    "error"
-                )
+                // notification(
+                //     "error"
+                // )
 
                 return
             }
@@ -1523,8 +1513,7 @@ const PriceListProductPricesForm = ({
                             </div>
                         </th>
                         {currencies.map((currency) => {
-                            const isTaxIncluded =
-                                priceListTaxInclusive ?? currency.includes_tax
+                            const isTaxIncluded =  currency.includes_tax
 
                             if (!visibleCurrencies.includes(currency.code)) {
                                 return null
@@ -1554,8 +1543,7 @@ const PriceListProductPricesForm = ({
                             )
                         })}
                         {regions.map((region) => {
-                            const isTaxIncluded =
-                                priceListTaxInclusive ?? region.includes_tax
+                            const isTaxIncluded = region.includes_tax
 
                             if (!visibleRegions.includes(region.id)) {
                                 return null

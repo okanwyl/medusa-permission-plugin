@@ -27,6 +27,8 @@ import {NestedForm} from "../../../../shared/form/nested-form";
 import { ProductFilter, ProductFilterMenu } from "../../product-filter-menu"
 import { Form } from "../../../../shared/form"
 import { useDebounce } from "../../../../hooks/use-debounce"
+import useAdminGroupPolicies, {PolicyGroup} from "../../../../hooks/groups";
+import {Policy, useAdminPolicies} from "../../../../hooks/policies";
 
 interface PriceListProductsFormProps {
   form: NestedForm<PriceListProductsSchema>
@@ -38,7 +40,7 @@ interface PriceListProductsFormProps {
 
 const PAGE_SIZE = 20
 
-const columnHelper = createColumnHelper<Product>()
+const columnHelper = createColumnHelper<Policy>()
 
 const usePriceListProductsFormColumns = () => {
   const { t } = useTranslation()
@@ -89,33 +91,13 @@ const usePriceListProductsFormColumns = () => {
           )
         },
       }),
-      columnHelper.accessor("title", {
-        header: () => t("price-list-products-form-product-label", "Product"),
+      columnHelper.accessor("name", {
+        header: () =>  "Name",
         cell: (info) => {
           const title = info.getValue()
-          const thumbnail = info.row.original.thumbnail
 
           return (
             <div className="flex items-center gap-x-3">
-              <div className="bg-ui-bg-subtle flex h-8 w-6 items-center justify-center overflow-hidden rounded-[4px]">
-                {thumbnail ? (
-                  <img
-                    src={thumbnail}
-                    alt={
-                      t(
-                        "price-list-products-form-product-thumbnail",
-                        "{{title}} thumbnail",
-                        {
-                          title,
-                        }
-                      ) ?? undefined
-                    }
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <PhotoSolid />
-                )}
-              </div>
               <Text size="small" className="text-ui-fg-base">
                 {title}
               </Text>
@@ -123,88 +105,62 @@ const usePriceListProductsFormColumns = () => {
           )
         },
       }),
-      columnHelper.accessor("collection", {
-        header: () =>
-          t("price-list-products-form-collection-label", "Collection"),
-        cell: (info) => info.getValue()?.title ?? "-",
+      columnHelper.accessor("base_router", {
+        header: () => "Router",
+        cell: (info) => info.getValue() ?? "-",
       }),
-      columnHelper.accessor("sales_channels", {
-        header: () =>
-          t("price-list-products-form-sales-channels-label", "Availability"),
-        cell: (info) => {
-          const salesChannels = info.getValue()
+      columnHelper.accessor("custom_regex", {
+        header: () =>"Regex",
+          cell: (info) => {
+            return(
+                <StatusBadge
+                    color={info.getValue() ? "purple" : "grey"}
+                    className="capitalize"
+                >
+                    {info.getValue() ? "Defined": "Not defined"}
+                </StatusBadge>
+                )
 
-          if (!salesChannels || salesChannels.length === 0) {
-            return "-"
-          }
-
-          const first = salesChannels[0].name
-
-          const remaining = salesChannels.length - 1
-
-          if (!remaining) {
-            return <span>{first}</span>
-          }
-
-          return (
-            <span>
-              {t(
-                "price-list-products-form-sales-channels-value",
-                "{{first}} + {{remaining}} more",
-                {
-                  first,
-                  remaining,
-                }
-              )}
-            </span>
-          )
-        },
+          },
       }),
-      columnHelper.accessor("status", {
-        header: () => t("price-list-products-form-status-label", "Status"),
+      columnHelper.accessor("method", {
+        header: () => "Method",
         cell: (info) => {
           const status = info.getValue()
+            // let color
+            let color;
+
+          switch (status) {
+              case "GET": {
+                  color = "green"
+                  break;
+              }
+              case "POST": {
+                  color = "purple"
+                  break;
+              }
+              case "DELETE": {
+                  color = "red"
+                  break;
+              }
+              case "PUT": {
+                  color = "blue"
+                  break;
+              }
+              case "PATCH": {
+                  color = "orange"
+                  break;
+              }
+          }
 
           return (
             <StatusBadge
-              color={status === "published" ? "green" : "grey"}
+              color={color}
               className="capitalize"
             >
               {status}
             </StatusBadge>
           )
-        },
-      }),
-      columnHelper.accessor("variants", {
-        header: () => (
-          <div className="text-right">
-            {t("price-list-products-form-inventory-label", "Inventory")}
-          </div>
-        ),
-        cell: (info) => {
-          let content: string | undefined = "-"
-
-          const variants = info.getValue()
-
-          if (!variants || variants.length === 0) {
-            content = "-"
-          }
-
-          const totalStock = variants.reduce((acc, curr) => {
-            return acc + curr.inventory_quantity
-          }, 0)
-
-          content =
-            t(
-              "price-list-products-form-inventory-value",
-              "{{totalStock}} in stock across {{variants}} variants",
-              {
-                totalStock,
-                variants: variants.length,
-              }
-            ) ?? undefined
-
-          return <div className="text-right">{content}</div>
         },
       }),
     ],
@@ -278,18 +234,14 @@ const PriceListProductsForm = ({
   const [query, setQuery] = React.useState<string>("")
   const debouncedQuery = useDebounce(query, 500)
 
-  const { products, count, isLoading, isError } = useAdminProducts(
-    {
-      limit: PAGE_SIZE,
-      offset,
-      expand: "variants,sales_channels,collection",
-      q: debouncedQuery,
-      ...filters,
-    },
-    {
-      keepPreviousData: true,
-    }
-  )
+    const { data, count, isLoading, isRefetching } = useAdminPolicies(
+        {
+            limit: PAGE_SIZE,
+            offset,
+            q: debouncedQuery,
+            ...filters,
+        }
+    )
 
   const pageCount = React.useMemo(() => {
     return count ? Math.ceil(count / PAGE_SIZE) : 0
@@ -299,7 +251,7 @@ const PriceListProductsForm = ({
 
   const table = useReactTable({
     columns,
-    data: (products as Product[] | undefined) ?? [],
+    data: (data?.policies as Policy[] | undefined) ?? [],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getRowId: (row) => row.id,
@@ -349,21 +301,7 @@ const PriceListProductsForm = ({
     )
   }
 
-  if (isError) {
-    return (
-      <div className="flex h-full w-full items-center justify-center gap-x-2">
-        <ExclamationCircle />
-        <Text className="text-ui-fg-subtle">
-          {t(
-            "price-list-products-form-error",
-            "An error occurred while loading products. Reload the page and try again. If the issue persists, try again later."
-          )}
-        </Text>
-      </div>
-    )
-  }
-
-  if (!products) {
+  if (!data.policies) {
     return (
       <div className="flex h-full w-full items-center justify-center gap-x-2">
         <ExclamationCircle />

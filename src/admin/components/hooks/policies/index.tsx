@@ -40,7 +40,7 @@ export type Policy = Policies
 type AdminPolicyQueryType = AdminPolicyQuery
 type AdminPoliciesResType = AdminPoliciesRes
 
-function useAdminPolicies(queryObject: any) {
+export function useAdminPolicies(queryObject: any) {
   const { data, isLoading, isRefetching } = useAdminCustomQuery<
     AdminPolicyQueryType,
     AdminPoliciesResType
@@ -78,7 +78,7 @@ export function mutateAdminPolicy() {
   const { mutate, isLoading } = useAdminCustomPost<
     AdminPolicyReq,
     AdminPolicyRes
-  >(`/policies`, ["policies-r"])
+  >(`/policies`, ["policies-post"])
 
   return {
     mutate,

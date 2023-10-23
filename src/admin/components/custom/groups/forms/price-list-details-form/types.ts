@@ -1,7 +1,7 @@
 import * as z from "zod"
-import { priceListDetailsSchema } from "./schema"
+import { groupPoliciesDetailsSchema } from "./schema"
 
-export type PriceListDetailsSchema = z.infer<typeof priceListDetailsSchema>
+export type PriceListDetailsSchema = z.infer<typeof groupPoliciesDetailsSchema>
 
 /**
  * Re-implementation of enum from `@medusajs/medusa` as it cannot be imported
