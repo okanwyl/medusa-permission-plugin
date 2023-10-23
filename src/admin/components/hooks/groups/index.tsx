@@ -70,7 +70,7 @@ export function useAdminGroupPolicyId(id: string) {
 }
 
 export function mutateGroupAdminPolicy() {
-  const { mutateAsync, isLoading } = useAdminCustomPost<
+  const { mutate, isLoading,isError, isSuccess, isIdle, isPaused} = useAdminCustomPost<
     AdminGroupPolicyReq,
     AdminGroupPolicyRes
   >(
@@ -79,8 +79,12 @@ export function mutateGroupAdminPolicy() {
   )
 
   return {
-    mutateAsync,
-    isLoading
+    mutate,
+    isLoadingSecond: isLoading,
+    isError,
+    isSuccess,
+    isIdle,
+    isPaused
   }
 }
 

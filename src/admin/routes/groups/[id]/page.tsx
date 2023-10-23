@@ -8,22 +8,19 @@ import {
     type ProgressStatus,
 } from "@medusajs/ui"
 import * as React from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { ExclamationCircle, Spinner } from "@medusajs/icons"
 import { Product } from "@medusajs/medusa"
-import { useAdminCreatePriceList } from "medusa-react"
 
 
 
 import { useTranslation } from "react-i18next"
-import {PriceListDetailsForm, groupPoliciesDetailsSchema, PriceListStatus, PriceListType} from "../../../components/custom/groups/forms/price-list-details-form";
 import {
-    PriceListProductsForm,
-    priceListProductsSchema
-} from "../../../components/custom/groups/forms/price-list-products-form";
-import {getDbSafeAmount, PriceListPricesForm, priceListPricesSchema, PricePayload, usePricesFormData} from "../../../components/custom/groups/forms/price-list-prices-form";
+    GroupPoliciesPoliciesForm,
+    groupPoliciesPoliciesSchema
+} from "../../../components/custom/groups/forms/group-policies-policies-form";
+import {PriceListPricesForm, priceListPricesSchema, usePricesFormData} from "../../../components/custom/groups/forms/price-list-prices-form";
 import {
     PriceListProductPricesForm,
     priceListProductPricesSchema,
@@ -33,6 +30,12 @@ import { Form } from "../../../components/shared/form"
 import {nestedForm} from "../../../components/shared/form/nested-form";
 import {useParams} from "react-router-dom";
 import {mutateGroupAdminPolicy} from "../../../components/hooks/groups";
+import {ExclamationCircle, Spinner } from "@medusajs/icons"
+import {groupPoliciesDetailsSchema, GroupPolicyDetailsForm, PriceListStatus} from "../../../components/custom/groups/forms/group-policy-details-form";
+import {
+    GroupPoliciesUsersForm,
+    groupPoliciesUsersSchema
+} from "../../../components/custom/groups/forms/group-policies-users-form";
 
 
 enum Tab {
@@ -44,8 +47,9 @@ enum Tab {
 
 const priceListNewSchema = z.object({
     details: groupPoliciesDetailsSchema,
-    products: priceListProductsSchema,
+    products: groupPoliciesPoliciesSchema,
     prices: priceListPricesSchema,
+    users: groupPoliciesUsersSchema
 })
 
 type PriceListNewSchema = z.infer<typeof priceListNewSchema>
@@ -103,6 +107,9 @@ const PriceListNew = () => {
             prices: {
                 products: {},
             },
+            users: {
+                ids: []
+            }
         },
     })
 
@@ -133,9 +140,9 @@ const PriceListNew = () => {
         resolver: zodResolver(priceListProductPricesSchema),
     })
 
-    const { mutateAsync, isLoading: isSubmitting } = mutateGroupAdminPolicy()
+    const { mutate, isLoadingSecond } = mutateGroupAdminPolicy()
 
-    const { isLoading, isError, isNotFound, regions, currencies } =
+    const { isLoading , isError, isNotFound, regions, currencies } =
         usePricesFormData({
             productIds: selectedIds,
         })
@@ -207,22 +214,12 @@ const PriceListNew = () => {
     const onSubmit = React.useCallback(
         async (status: PriceListStatus) => {
             await handleSubmit(async (data) => {
-                const prices: PricePayload[] = []
-
                 const productPriceKeys = Object.keys(data.prices.products)
                 const productIds = data.products.ids
-
-                if (!productPriceKeys.length || !data.prices.products) {
-                    setError("prices.products", {
-                        type: "manual",
-                        message: t(
-                            "price-list-new-form-no-prices-error",
-                            "Please set prices for at least one product."
-                        ) as string,
-                    })
-
-                    return
-                }
+                const payloadPolicies = []
+                productIds.forEach((payloadId) => {
+                    payloadPolicies.push({id:payloadId })
+                });
 
                 const missingProducts = productIds.filter(
                     (id) => !productPriceKeys.includes(id)
@@ -245,87 +242,18 @@ const PriceListNew = () => {
                     }
                 }
 
-                /**
-                 * Loop through all the products and variants
-                 * and create a payload for each price.
-                 *
-                 * If a price does not have an amount, we
-                 * skip it.
-                 */
-                for (const productId of Object.keys(data.prices.products)) {
-                    const product = data.prices.products[productId]
 
-                    for (const variantId of Object.keys(product.variants)) {
-                        const variant = product.variants[variantId]
-
-                        if (variant.currency) {
-                            for (const currencyCode of Object.keys(variant.currency)) {
-                                const { amount } = variant.currency[currencyCode]
-
-                                if (!amount) {
-                                    continue
-                                }
-
-                                const dbSafeAmount = getDbSafeAmount(
-                                    currencyCode,
-                                    parseFloat(amount)
-                                )
-
-                                if (!dbSafeAmount) {
-                                    continue
-                                }
-
-                                const payload: PricePayload = {
-                                    amount: dbSafeAmount,
-                                    variant_id: variantId,
-                                    currency_code: currencyCode,
-                                }
-
-                                prices.push(payload)
-                            }
-                        }
-
-                        if (variant.region) {
-                            for (const regionId of Object.keys(variant.region)) {
-                                const { amount } = variant.region[regionId]
-
-                                if (!amount) {
-                                    continue
-                                }
-
-                                const dbSafeAmount = getDbSafeAmount(
-                                    regions.find((r) => r.id === regionId)!.currency_code,
-                                    parseFloat(amount)
-                                )
-
-                                if (!dbSafeAmount) {
-                                    continue
-                                }
-
-                                const payload: PricePayload = {
-                                    amount: dbSafeAmount,
-                                    variant_id: variantId,
-                                    region_id: regionId,
-                                }
-
-                                prices.push(payload)
-                            }
-                        }
-                    }
-                }
-
-                await mutateAsync(
+                mutate(
                     {
                         name: data.details.general.name,
                         description: data.details.general.description,
-                        policies: [],
+                        policies: payloadPolicies,
                     },
                     {
                         onSuccess: () => {
                             onCloseModal()
                         },
                         onError: (err) => {
-
                         },
                     }
                 )
@@ -333,14 +261,14 @@ const PriceListNew = () => {
         },
         [
             handleSubmit,
-            mutateAsync,
+            mutate,
             // notification,
             onCloseModal,
             setError,
             prompt,
             t,
             // isTaxInclPricesEnabled,
-            regions,
+            // regions,
         ]
     )
 
@@ -572,7 +500,7 @@ const PriceListNew = () => {
                                 status={status[Tab.PRODUCTS]}
                             >
                 <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                  {t("price-list-new-form-products-tab", "Choose Products")}
+                  {"Attach Policies"}
                 </span>
                             </ProgressTabs.Trigger>
                             <ProgressTabs.Trigger
@@ -591,7 +519,7 @@ const PriceListNew = () => {
                             {product && (
                                 <ProgressTabs.Trigger
                                     value={Tab.EDIT}
-                                    disabled={isLoading || isError}
+                                    disabled={isLoading}
                                     className="w-full min-w-0 max-w-[200px]"
                                     status={isEditDirty ? "in-progress" : "not-started"}
                                 >
@@ -605,16 +533,16 @@ const PriceListNew = () => {
                             <Button
                                 variant="secondary"
                                 onClick={onBack}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             >
                                 {backButtonText}
                             </Button>
-                            {tab === Tab.PRICES && !isSubmitting && (
+                            {tab === Tab.PRICES && !isLoading && (
                                 <Button onClick={() => onSubmit(PriceListStatus.DRAFT)}>
                                     {t("price-list-new-form-save-as-draft", "Save as Draft")}
                                 </Button>
                             )}
-                            <Button type="button" onClick={onNext} isLoading={isSubmitting}>
+                            <Button type="button" onClick={onNext} isLoading={isLoading}>
                                 {nextButtonText}
                             </Button>
                         </div>
@@ -627,7 +555,7 @@ const PriceListNew = () => {
                                     className="h-full w-full max-w-[720px]"
                                 >
                                     <div className="px-8 py-12">
-                                        <PriceListDetailsForm
+                                        <GroupPolicyDetailsForm
                                             form={nestedForm(form, "details")}
                                             layout="focus"
                                             enableTaxToggle={false}
@@ -638,8 +566,10 @@ const PriceListNew = () => {
                                     value={Tab.PRODUCTS}
                                     className="h-full w-full"
                                 >
-                                    <PriceListProductsForm form={nestedForm(form, "products")} />
+                                    <GroupPoliciesPoliciesForm form={nestedForm(form, "products")} />
                                 </ProgressTabs.Content>
+                                {/*<GroupPoliciesUsersForm form={nestedForm(form,"users")}/>*/}
+
                                 {isLoading ? (
                                     <div className="flex h-full w-full items-center justify-center">
                                         <Spinner className="text-ui-fg-subtle animate-spin" />
@@ -662,26 +592,29 @@ const PriceListNew = () => {
                                             value={Tab.PRICES}
                                             className="h-full w-full"
                                         >
-                                            <PriceListPricesForm
-                                                setProduct={onSetProduct}
-                                                form={nestedForm(form, "prices")}
-                                                productIds={selectedIds}
-                                            />
+                                            {/*<PriceListPricesForm*/}
+                                            {/*    setProduct={onSetProduct}*/}
+                                            {/*    form={nestedForm(form, "prices")}*/}
+                                            {/*    productIds={selectedIds}*/}
+                                            {/*/>*/}
+                                            <GroupPoliciesUsersForm form={nestedForm(form,"users")}/>
+
                                         </ProgressTabs.Content>
                                         {product && (
                                             <ProgressTabs.Content
                                                 value={Tab.EDIT}
                                                 className="h-full w-full"
                                             >
-                                                <PriceListProductPricesForm
-                                                    taxInclEnabled={false}
-                                                    product={product}
-                                                    currencies={currencies}
-                                                    regions={regions}
-                                                    control={editControl}
-                                                    getValues={getEditValues}
-                                                    setValue={setEditValue}
-                                                />
+                                                {/*<PriceListProductPricesForm*/}
+                                                {/*    taxInclEnabled={false}*/}
+                                                {/*    product={product}*/}
+                                                {/*    currencies={currencies}*/}
+                                                {/*    regions={regions}*/}
+                                                {/*    control={editControl}*/}
+                                                {/*    getValues={getEditValues}*/}
+                                                {/*    setValue={setEditValue}*/}
+                                                {/*/>*/}
+                                                <GroupPoliciesUsersForm form={nestedForm(form,"users")}/>
                                             </ProgressTabs.Content>
                                         )}
                                     </React.Fragment>

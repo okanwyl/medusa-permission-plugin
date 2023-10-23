@@ -1,37 +1,32 @@
-import type {CustomerGroup} from "@medusajs/medusa"
 import {
-    Checkbox,
     Heading,
     Input,
     Text,
     Textarea,
     clx,
 } from "@medusajs/ui"
-import {
-    createColumnHelper,
-} from "@tanstack/react-table"
+
 import * as React from "react"
 
-import {useTranslation} from "react-i18next"
 import { Form } from "../../../../shared/form"
 import {NestedForm} from "../../../../shared/form/nested-form";
-import { PriceListDetailsSchema } from "./types"
+import { GroupPolicyDetailsScheme } from "./types"
 
 
-interface PriceListDetailsFormProps {
-    form: NestedForm<PriceListDetailsSchema>
+interface GroupPolicyDetailsFormProps {
+    form: NestedForm<GroupPolicyDetailsScheme>
     layout: "drawer" | "focus"
     enableTaxToggle?: boolean
 }
 
-const PriceListDetailsForm = ({
+const GroupPolicyDetailsForm = ({
                                   form,
                                   layout,
                                   enableTaxToggle,
-                              }: PriceListDetailsFormProps) => {
+                              }: GroupPolicyDetailsFormProps) => {
     return (
         <div className="flex w-full flex-col gap-y-12">
-            <PriceListGeneral
+            <GroupPolicyGeneral
                 form={form}
                 layout={layout}
                 enableTaxToggle={enableTaxToggle}
@@ -41,10 +36,10 @@ const PriceListDetailsForm = ({
 }
 
 
-const PriceListGeneral = ({
+const GroupPolicyGeneral = ({
                               form,
                               layout,
-                          }: PriceListDetailsFormProps) => {
+                          }: GroupPolicyDetailsFormProps) => {
 
     return (
         <div className="flex flex-col gap-y-6">
@@ -111,67 +106,5 @@ const PriceListGeneral = ({
     )
 }
 
-/** Dates */
 
-/** Customer groups */
-const columnHelper = createColumnHelper<CustomerGroup>()
-
-const useCustomerGroupsColumns = () => {
-    const {t} = useTranslation()
-
-    const columns = React.useMemo(
-        () => [
-            columnHelper.display({
-                id: "select",
-                header: ({table}) => {
-                    return (
-                        <Checkbox
-                            checked={
-                                table.getIsSomePageRowsSelected()
-                                    ? "indeterminate"
-                                    : table.getIsAllPageRowsSelected()
-                            }
-                            onCheckedChange={(value) =>
-                                table.toggleAllPageRowsSelected(!!value)
-                            }
-                            aria-label="Select all customer groups on the current page"
-                        />
-                    )
-                },
-                cell: ({row}) => {
-                    return (
-                        <Checkbox
-                            checked={row.getIsSelected()}
-                            onCheckedChange={(value) => row.toggleSelected(!!value)}
-                            aria-label="Select row"
-                        />
-                    )
-                },
-            }),
-            columnHelper.accessor("name", {
-                header: () => t("price-list-details-form-customer-groups-name", "Name"),
-                cell: (info) => info.getValue(),
-            }),
-            columnHelper.accessor("customers", {
-                header: () => (
-                    <div className="w-full text-right">
-                        {t("price-list-details-form-customer-groups-members", "Members")}
-                    </div>
-                ),
-                cell: (info) => (
-                    <div className="w-full text-right">
-                        {info.getValue()?.length || "-"}
-                    </div>
-                ),
-            }),
-        ],
-        [t]
-    )
-
-    return {
-        columns,
-    }
-}
-
-
-export {PriceListDetailsForm}
+export {GroupPolicyDetailsForm}

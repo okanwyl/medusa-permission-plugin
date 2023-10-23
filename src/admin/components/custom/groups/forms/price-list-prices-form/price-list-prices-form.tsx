@@ -9,7 +9,7 @@ import { useDebounce } from "../../../../hooks/use-debounce"
 import { PriceListPricesSchema } from "./types"
 import {NestedForm} from "../../../../shared/form/nested-form";
 import { Form } from "../../../../shared/form"
-import {ProductFilter, ProductFilterMenu} from "../../product-filter-menu";
+import {PoliciesFilter, PoliciesFilterMenu} from "../../policies-filter-menu";
 
 type PriceListPricesFormProps = {
     form: NestedForm<PriceListPricesSchema>
@@ -33,7 +33,7 @@ const PriceListPricesForm = ({
 
     const { t } = useTranslation()
 
-    const [filters, setFilters] = React.useState<ProductFilter>({})
+    const [filters, setFilters] = React.useState<PoliciesFilter>({})
     const [query, setQuery] = React.useState("")
 
     const debouncedQuery = useDebounce(query, 500)
@@ -112,7 +112,7 @@ const PriceListPricesForm = ({
                         )}
                     </div>
                     <div className="flex items-center gap-x-2">
-                        <ProductFilterMenu
+                        <PoliciesFilterMenu
                             onClearFilters={() => setFilters({})}
                             value={filters}
                             onFilterChange={setFilters}

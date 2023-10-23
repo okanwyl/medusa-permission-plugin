@@ -1,4 +1,4 @@
-import { Command } from "../../../../../../../../medusa/packages/admin-ui/ui/src/hooks/use-command-history"
+import { Command } from "../../../../hooks/use-command-history"
 
 /**
  * A sorted set implementation that uses binary search to find the insertion index.

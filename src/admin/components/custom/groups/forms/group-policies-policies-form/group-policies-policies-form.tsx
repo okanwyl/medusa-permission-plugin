@@ -18,32 +18,24 @@ import {
   type PaginationState,
   type RowSelectionState,
 } from "@tanstack/react-table"
-import { useAdminProducts } from "medusa-react"
 import * as React from "react"
 
-import { useTranslation } from "react-i18next"
-import { PriceListProductsSchema } from "./types"
+import { GroupPoliciesPoliciesSchema } from "./types"
 import {NestedForm} from "../../../../shared/form/nested-form";
-import { ProductFilter, ProductFilterMenu } from "../../product-filter-menu"
+import { PoliciesFilter, PoliciesFilterMenu } from "../../policies-filter-menu"
 import { Form } from "../../../../shared/form"
 import { useDebounce } from "../../../../hooks/use-debounce"
-import useAdminGroupPolicies, {PolicyGroup} from "../../../../hooks/groups";
 import {Policy, useAdminPolicies} from "../../../../hooks/policies";
 
-interface PriceListProductsFormProps {
-  form: NestedForm<PriceListProductsSchema>
-  /**
-   * Products that are already part of the price list.
-   */
-  productIds?: string[]
+interface GroupPoliciesPoliciesFormProp {
+  form: NestedForm<GroupPoliciesPoliciesSchema>
+  policies?: string[]
 }
 
 const PAGE_SIZE = 20
 
 const columnHelper = createColumnHelper<Policy>()
-
-const usePriceListProductsFormColumns = () => {
-  const { t } = useTranslation()
+const useGroupPoliciesPoliciesFormColumns = () => {
 
   const columns = React.useMemo(
     () => [
@@ -61,31 +53,27 @@ const usePriceListProductsFormColumns = () => {
                 table.toggleAllPageRowsSelected(!!value)
               }
               aria-label={
-                t(
-                  "price-list-products-form-select-all",
-                  "Select all products on the current page"
-                ) ?? undefined
+                  "Select all policies on the current page"
               }
             />
           )
         },
         cell: ({ table, row }) => {
-          const { productIds } = table.options.meta as {
-            productIds: string[]
+          const { policies } = table.options.meta as {
+            policies: string[]
           }
 
-          const isSelected = row.getIsSelected() || productIds.includes(row.id)
+          const isSelected = row.getIsSelected() || policies.includes(row.id)
 
           return (
             <Checkbox
               checked={isSelected}
-              disabled={productIds.includes(row.id)}
+              disabled={policies.includes(row.id)}
               onCheckedChange={(value) => {
                 row.toggleSelected(!!value)
               }}
               aria-label={
-                t("price-list-products-form-select-row", "Select row") ??
-                undefined
+                "Select row"
               }
             />
           )
@@ -164,16 +152,15 @@ const usePriceListProductsFormColumns = () => {
         },
       }),
     ],
-    [t]
+    []
   )
 
   return { columns }
 }
-
-const PriceListProductsForm = ({
+const GroupPoliciesPoliciesForm = ({
   form,
-  productIds,
-}: PriceListProductsFormProps) => {
+  policies,
+}: GroupPoliciesPoliciesFormProp) => {
   const {
     register,
     path,
@@ -183,7 +170,6 @@ const PriceListProductsForm = ({
     formState: { isDirty },
   } = form
 
-  const { t } = useTranslation()
 
   /**
    * Table state.
@@ -223,7 +209,7 @@ const PriceListProductsForm = ({
     [pagination.pageIndex, pagination.pageSize]
   )
 
-  const [filters, setFilters] = React.useState<ProductFilter>({
+  const [filters, setFilters] = React.useState<PoliciesFilter>({
     created_at: undefined,
     updated_at: undefined,
   })
@@ -247,7 +233,7 @@ const PriceListProductsForm = ({
     return count ? Math.ceil(count / PAGE_SIZE) : 0
   }, [count])
 
-  const { columns } = usePriceListProductsFormColumns()
+  const { columns } = useGroupPoliciesPoliciesFormColumns()
 
   const table = useReactTable({
     columns,
@@ -260,7 +246,7 @@ const PriceListProductsForm = ({
       pagination,
     },
     meta: {
-      productIds: productIds ?? [],
+      policies: policies?? [],
     },
     pageCount,
     enableRowSelection: true,
@@ -295,7 +281,7 @@ const PriceListProductsForm = ({
       <div className="flex h-full w-full items-center justify-center">
         <Spinner className="animate-spin" />
         <span className="sr-only">
-          {t("price-list-products-form-loading", "Loading products")}
+          {"Loading policies"}
         </span>
       </div>
     )
@@ -306,7 +292,7 @@ const PriceListProductsForm = ({
       <div className="flex h-full w-full items-center justify-center gap-x-2">
         <ExclamationCircle />
         <Text className="text-ui-fg-subtle">
-          {t("price-list-products-form-no-products", "No products found.")}
+          {"No policies found."}
         </Text>
       </div>
     )
@@ -317,7 +303,7 @@ const PriceListProductsForm = ({
       <div className="border-ui-border-base flex items-center justify-between border-b px-8 pt-6 pb-4">
         <div className="flex items-center gap-x-3">
           <Heading>
-            {t("price-list-products-form-heading", "Choose products")}
+            {"Choose policies"}
           </Heading>
           {isDirty && (
             <Form.Field
@@ -334,7 +320,7 @@ const PriceListProductsForm = ({
           )}
         </div>
         <div className={clx("flex items-center gap-x-2")}>
-          <ProductFilterMenu
+          <PoliciesFilterMenu
             onClearFilters={() =>
               setFilters({
                 created_at: undefined,
@@ -347,7 +333,7 @@ const PriceListProductsForm = ({
           <Input
             type="search"
             placeholder={
-              t("price-list-products-form-search-placeholder", "Search") ??
+              "Search" ??
               undefined
             }
             size="small"
@@ -386,7 +372,7 @@ const PriceListProductsForm = ({
                 className={clx(
                   {
                     "bg-ui-bg-disabled hover:bg-ui-bg-disabled":
-                      productIds?.includes(row.id),
+                      policies?.includes(row.id),
                   },
                   {
                     "bg-ui-bg-highlight hover:bg-ui-bg-highlight-hover":
@@ -418,4 +404,4 @@ const PriceListProductsForm = ({
   )
 }
 
-export { PriceListProductsForm }
+export { GroupPoliciesPoliciesForm }
