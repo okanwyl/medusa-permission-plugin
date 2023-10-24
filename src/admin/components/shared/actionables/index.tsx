@@ -31,7 +31,6 @@ const Actionables: React.FC<ActionablesProps> = ({
             {!customTrigger ? (
               <Button
                 variant="primary"
-                // size="small"
                 className="w-xlarge h-xlarge focus-visible:shadow-input focus-visible:border-violet-60 focus:shadow-none focus-visible:outline-none"
               >
                 <MoreHorizontalIcon size={20} />
@@ -51,7 +50,6 @@ const Actionables: React.FC<ActionablesProps> = ({
                   {
                     <Button
                       variant="secondary"
-                      // size="small"
                       className={clsx("flex w-full justify-start", {
                         "text-rose-50": action?.variant === "danger",
                         "pointer-events-none select-none opacity-50":
@@ -91,7 +89,6 @@ const Actionables: React.FC<ActionablesProps> = ({
       <div>
         <Button
           variant="secondary"
-          // size="small"
           type="button"
           className="flex items-center"
           onClick={action.onClick}

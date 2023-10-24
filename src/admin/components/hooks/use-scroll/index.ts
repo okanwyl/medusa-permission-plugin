@@ -1,10 +1,10 @@
-import { useState } from "react"
+import {useState} from "react"
 
 type useScrollProps = {
     threshold?: number
 }
 
-export const useScroll = ({ threshold = 0 }: useScrollProps) => {
+export const useScroll = ({threshold = 0}: useScrollProps) => {
     const [isScrolled, setIsScrolled] = useState(false)
 
     const scrollListener = (e) => {
@@ -16,5 +16,5 @@ export const useScroll = ({ threshold = 0 }: useScrollProps) => {
         }
     }
 
-    return { isScrolled, scrollListener }
+    return {isScrolled, scrollListener}
 }

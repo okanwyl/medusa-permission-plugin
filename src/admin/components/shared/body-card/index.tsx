@@ -114,7 +114,6 @@ const BodyCard: React.FC<BodyCardProps> = ({
                   onClick={event.onClick}
                   className="first:ml-xsmall justify-center"
                   variant={i === 0 ? "primary" : "secondary"}
-                  // size={"small"}
                   type={event.type}
                 >
                   {event.label}

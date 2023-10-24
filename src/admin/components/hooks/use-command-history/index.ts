@@ -1,9 +1,5 @@
 import * as React from "react"
 
-/**
- * Base interface for a command that can be managed
- * by the `useCommandHistory` hook.
- */
 interface Command {
     execute: () => void
     undo: () => void

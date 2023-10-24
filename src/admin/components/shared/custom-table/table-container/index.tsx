@@ -14,13 +14,11 @@ type Props<T extends boolean> = PropsWithChildren<{
 
 const TableContainer = <T extends boolean>({
   children,
-  // TODO: remove (redundant)
   hasPagination,
   pagingState,
   isLoading,
   numberOfRows = 12,
 }: Props<T>) => {
-  // We use the number of rows (query limit) plus the header row to calculate the minimum height of the table, to avoid the table jumping around while loading.
   const minHeight = (numberOfRows + 1) * ROW_HEIGHT
 
   return (

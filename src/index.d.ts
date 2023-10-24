@@ -1,7 +1,7 @@
-import {PoliciesGroup} from "./models/policies-group";
+import {PolicyCluster} from "./models/policy-cluster";
 
 export declare module "@medusajs/medusa/dist/models/user" {
     declare interface User {
-        permission_group: PoliciesGroup
+        policy_cluster: PolicyCluster
     }
 }

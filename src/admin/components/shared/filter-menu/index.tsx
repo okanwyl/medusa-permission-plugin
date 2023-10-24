@@ -218,9 +218,7 @@ import {
           e.preventDefault()
           setOpen(false)
   
-          /**
-           * Attempt to restore focus to the trigger element
-           */
+
           triggerRef.current?.focus()
         }
       }

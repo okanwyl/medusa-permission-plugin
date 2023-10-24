@@ -1,11 +1,9 @@
-GET http://localhost:9000/admin/policies/
+GET http://localhost:9000/admin/policy/
 Content-Type: application/json
 
 {
-  "name": "a",
+  "name": "a2",
   "method": "POST",
-  "base_router": "defined",
-  "custom_regex": "asdsa"
-
+  "base_router": "defined"
 }
 

@@ -1,8 +1,7 @@
-GET http://localhost:9000/admin/policy-groups/
+GET http://localhost:9000/admin/policy-cluster/
 Content-Type: application/json
 
 {
-  "name": "Admins22",
-  "users": ["usr_01HDCAKV1H4VR25NBH67NR2D68"]
+  "name": "Admins232"
 }
 

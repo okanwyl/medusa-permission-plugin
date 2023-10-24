@@ -1,12 +1,12 @@
-import {Column, Entity, JoinColumn, ManyToOne} from "typeorm"
+import {Entity, JoinColumn, ManyToOne} from "typeorm"
 import {
     User as MedusaUser,
 } from "@medusajs/medusa"
-import {PoliciesGroup} from "./policies-group";
+import {PolicyCluster} from "./policy-cluster";
 
 @Entity()
-export class User extends MedusaUser{
-    @ManyToOne(() => PoliciesGroup, (groupPolicy) => groupPolicy.users)
-    @JoinColumn({ name: "policies_group_id" })
-    permission_group: PoliciesGroup
+export class User extends MedusaUser {
+    @ManyToOne(() => PolicyCluster, (groupPolicy) => groupPolicy.user)
+    @JoinColumn({name: "policy_cluster"})
+    policy_cluster: PolicyCluster
 }

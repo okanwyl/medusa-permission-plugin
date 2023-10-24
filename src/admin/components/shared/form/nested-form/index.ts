@@ -18,38 +18,7 @@ export type NestedForm<TValues extends FieldValues> = UseFormReturn<{
     p?: TPath
   ): Get<TObj, `__nested__.${TPath}`>
 }
-/**
- * Utility function to create a nested form. This is useful when you want to use a reusable form component within a form.
- * This is especially useful when you want to use a reusable form component within a form multiple times. For example, an form
- * that contains both a billing and a shipping address.
- * @example
- * const MyForm = () => {
- *   const form = useForm<{ email: string, shipping_address: AddressPayload, billing_address: AddressPayload }>()
- *
- *   return (
- *     <div>
- *       <Input {...form.register("email")} label="email" />
- *       <AddressForm form={nestedForm(form, "shipping_address")} />
- *       <AddressForm form={nestedForm(form, "billing_address")} />
- *     </div>
- *   )
- * }
- *
- * type AddressFormProps = {
- *   form: NestedForm<AddressPayload>
- * }
- *
- * const AddressForm = ({ form }: AddressFormProps) => {
- *   const { register, path } = form
- *
- *   return (
- *     <div>
- *       <Input {...register(path("city"))} label="City" /> // path("city") resolves as "shipping_address.city" or "billing_address.city" depending on the second argument passed to nestedForm
- *       <Input {...register(path("postal_code"))} label="Postal Code" />
- *     </div>
- *   )
- * }
- */
+
 export function nestedForm<TValues extends FieldValues>(
   form: UseFormReturn<TValues> | NestedForm<TValues>
 ): NestedForm<TValues>
