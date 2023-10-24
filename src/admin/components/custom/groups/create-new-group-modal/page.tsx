@@ -10,7 +10,6 @@ import {
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Product } from "@medusajs/medusa"
 import { useTranslation } from "react-i18next"
 import {
     GroupPoliciesPoliciesForm,
@@ -25,8 +24,6 @@ import {
     groupPoliciesUsersSchema
 } from "../forms/group-policies-users-form";
 import {ExclamationCircle, Spinner } from "@medusajs/icons"
-import {createContext, useContext, useState} from "react";
-
 
 enum Tab {
     DETAILS = "details",
@@ -37,7 +34,6 @@ enum Tab {
 const priceListNewSchema = z.object({
     details: groupPoliciesDetailsSchema,
     products: groupPoliciesPoliciesSchema,
-    // prices: priceListPricesSchema,
     users: groupPoliciesUsersSchema
 })
 
@@ -47,9 +43,7 @@ type StepStatus = {
     [key in Tab]: ProgressStatus
 }
 
-const CreateNewGroupModal = () => {
-    const [open, setOpen] = React.useState(false)
-
+const CreateNewGroupModal = ({open, setOpen}) => {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([])
 
     const [tab, setTab] = React.useState<Tab>(Tab.DETAILS)
@@ -310,9 +304,6 @@ const CreateNewGroupModal = () => {
 
     return (
         <FocusModal open={open} onOpenChange={onModalStateChange}>
-            <FocusModal.Trigger asChild>
-                <Button variant="secondary">Create New</Button>
-            </FocusModal.Trigger>
             <ProgressTabs
                 value={tab}
                 onValueChange={(tab) => onTabChange(tab as Tab)}
