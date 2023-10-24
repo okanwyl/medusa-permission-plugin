@@ -5,6 +5,7 @@ export declare type CreatePoliciesGroup = {
   handle?: string
   description?: string
   policies?: CreatePolicyGroupPolicyInput[] | null
+  users: string[]
 }
 
 export type CreatePolicyGroupPolicyInput = {

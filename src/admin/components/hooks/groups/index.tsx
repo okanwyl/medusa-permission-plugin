@@ -30,7 +30,8 @@ export type AdminGroupPolicyRes = {
 export type AdminGroupPolicyReq = {
   name: string,
   description: string,
-  policies: string[]
+  policies: string[],
+  users: string[]
 }
 
 

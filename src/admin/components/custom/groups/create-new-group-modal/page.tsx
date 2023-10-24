@@ -147,6 +147,12 @@ const CreateNewGroupModal = ({open, setOpen}) => {
                     payloadPolicies.push({id:payloadId })
                 });
 
+                const userIds = data.users.ids
+
+                const payloadUsers = []
+                userIds.forEach((payloadId) => {
+                    payloadUsers.push(payloadId)
+                })
 
                     const res = await prompt({
                         title: "Are you sure?",
@@ -163,6 +169,7 @@ const CreateNewGroupModal = ({open, setOpen}) => {
                         name: data.details.general.name,
                         description: data.details.general.description,
                         policies: payloadPolicies,
+                        users : payloadUsers
                     },
                     {
                         onSuccess: () => {

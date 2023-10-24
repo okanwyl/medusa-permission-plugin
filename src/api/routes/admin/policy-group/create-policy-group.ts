@@ -55,4 +55,7 @@ export class AdminPoliciesGroupReq {
   @ValidateNested({ each: true })
   @IsArray()
   policies?: PoliciesGroupPolicyReq[]
+
+  @IsArray()
+  users: string[]
 }

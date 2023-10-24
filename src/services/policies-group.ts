@@ -17,6 +17,7 @@ import {
   CreatePoliciesGroup,
   UpdatePoliciesGroup,
 } from "../types/policies-group"
+import {User} from "../models/user";
 
 type ListAndCountSelector = Selector<PoliciesGroup> & {
   q?: string
@@ -101,7 +102,7 @@ export default class PoliciesGroupService extends TransactionBaseService {
         this.policiesGroupRepository_
       )
 
-      const { policies: policies, ...rest } = policyGroupDto
+      const { policies: policies, users,...rest } = policyGroupDto
 
       let policiesGroup = policiesGroupRepository.create(rest)
 
@@ -111,6 +112,15 @@ export default class PoliciesGroupService extends TransactionBaseService {
         if (policies?.length) {
           const policyIds = policies.map((policy) => policy.id)
           policiesGroup.policies = policyIds.map((id) => ({ id }) as Policies)
+        }
+      }
+
+      if (isDefined(users)) {
+        policiesGroup.users = []
+
+        if (users?.length) {
+          const userIds = users.map((user) => user)
+          policiesGroup.users = userIds.map((id) => ({ id }) as User)
         }
       }
 

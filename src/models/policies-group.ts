@@ -4,12 +4,13 @@ import {
   Index,
   BeforeInsert,
   JoinTable,
-  ManyToMany,
+  ManyToMany, OneToMany,
 } from "typeorm"
 import { generateEntityId } from "@medusajs/medusa/dist/utils"
 import _ from "lodash"
-import { SoftDeletableEntity } from "@medusajs/medusa"
+import {SoftDeletableEntity} from "@medusajs/medusa"
 import { Policies } from "./policies"
+import { User } from "./user"
 
 @Entity()
 export class PoliciesGroup extends SoftDeletableEntity {
@@ -38,6 +39,10 @@ export class PoliciesGroup extends SoftDeletableEntity {
   })
   policies: Policies[]
 
+  @OneToMany(() => User, (user) => user.permission_group, {
+    cascade: true,
+  })
+  users: User[]
   @BeforeInsert()
   private handleBeforeInsert(): void {
     if (this.id) {

@@ -2,6 +2,7 @@ GET http://localhost:9000/admin/policy-groups/
 Content-Type: application/json
 
 {
-  "name": "Admins5"
+  "name": "Admins22",
+  "users": ["usr_01HDCAKV1H4VR25NBH67NR2D68"]
 }
 
