@@ -1,220 +1,220 @@
-import {Lifetime} from "awilix"
+import { Lifetime } from "awilix"
 import {
-    buildQuery,
-    ExtendedFindConfig,
-    FindConfig,
-    isString,
-    Selector,
-    TransactionBaseService,
+  buildQuery,
+  ExtendedFindConfig,
+  FindConfig,
+  isString,
+  Selector,
+  TransactionBaseService,
 } from "@medusajs/medusa"
-import {FindManyOptions, FindOptionsWhere, ILike} from "typeorm"
-import {IEventBusService} from "@medusajs/types"
-import {Policy} from "../models/policy"
-import {isDefined, MedusaError} from "medusa-core-utils"
-import {PolicyCluster} from "src/models/policy-cluster"
+import { FindManyOptions, FindOptionsWhere, ILike } from "typeorm"
+import { IEventBusService } from "@medusajs/types"
+import { Policy } from "../models/policy"
+import { isDefined, MedusaError } from "medusa-core-utils"
+import { PolicyCluster } from "src/models/policy-cluster"
 import PolicyClusterRepository from "../repositories/policy-cluster"
 import {
-    CreatePolicyCluster,
-    UpdatePolicyCluster,
+  CreatePolicyCluster,
+  UpdatePolicyCluster,
 } from "../types/policy-cluster"
-import {User} from "../models/user";
+import { User } from "../models/user"
 
 type ListAndCountSelector = Selector<PolicyCluster> & {
-    q?: string
+  q?: string
 }
 
 export default class PolicyClusterService extends TransactionBaseService {
-    static LIFETIME = Lifetime.SINGLETON
-    protected readonly policyClusterRepository_: typeof PolicyClusterRepository
-    protected readonly eventBusService_: IEventBusService
+  static LIFETIME = Lifetime.SINGLETON
+  protected readonly policyClusterRepository_: typeof PolicyClusterRepository
+  protected readonly eventBusService_: IEventBusService
 
-    static readonly Events = {
-        CREATED: "policy-cluster.created",
-        UPDATED: "policy-cluster.updated",
-        DELETED: "policy-cluster.deleted",
+  static readonly Events = {
+    CREATED: "policy-cluster.created",
+    UPDATED: "policy-cluster.updated",
+    DELETED: "policy-cluster.deleted",
+  }
+
+  constructor(container) {
+    // @ts-ignore
+    // eslint-disable-next-line prefer-rest-params
+    super(...arguments)
+    this.eventBusService_ = container.eventBusService
+    this.policyClusterRepository_ = container.policyClusterRepository
+  }
+
+  async list(
+    selector: Selector<PolicyCluster> & {
+      q?: string
+    } = {},
+    config = { skip: 0, take: 20 }
+  ): Promise<PolicyCluster[]> {
+    const [policyClusters] = await this.listAndCount(selector, config)
+    return policyClusters
+  }
+
+  async listAndCount(
+    selector: ListAndCountSelector = {},
+    config: FindConfig<PolicyCluster> = { skip: 0, take: 20 }
+  ): Promise<[PolicyCluster[], number]> {
+    const manager = this.activeManager_
+    const policyClusterRepository = manager.withRepository(
+      this.policyClusterRepository_
+    )
+
+    let q
+    if (isString(selector.q)) {
+      q = selector.q
+      delete selector.q
     }
 
-    constructor(container) {
-        // @ts-ignore
-        super(...arguments)
-        this.eventBusService_ = container.eventBusService
-        this.policyClusterRepository_ = container.policyClusterRepository
+    const query = buildQuery(
+      selector,
+      config
+    ) as FindManyOptions<PolicyCluster> & {
+      where: {}
+    } & ExtendedFindConfig<PolicyCluster>
+
+    if (q) {
+      const where = query.where as FindOptionsWhere<PolicyCluster>
+
+      delete where.name
+      delete where.created_at
+      delete where.updated_at
+
+      query.where = [
+        {
+          ...where,
+          name: ILike(`%${q}%`),
+        },
+      ]
     }
 
-    async list(
-        selector: Selector<PolicyCluster> & {
-            q?: string
-        } = {},
-        config = {skip: 0, take: 20}
-    ): Promise<PolicyCluster[]> {
-        const [policyClusters] = await this.listAndCount(selector, config)
-        return policyClusters
-    }
+    return await policyClusterRepository.findAndCount(query)
+  }
 
-    async listAndCount(
-        selector: ListAndCountSelector = {},
-        config: FindConfig<PolicyCluster> = {skip: 0, take: 20}
-    ): Promise<[PolicyCluster[], number]> {
-        const manager = this.activeManager_
-        const policyClusterRepository = manager.withRepository(
-            this.policyClusterRepository_
-        )
+  async create(policyClusterDto: CreatePolicyCluster): Promise<PolicyCluster> {
+    return await this.atomicPhase_(async (manager) => {
+      const policyClusterRepository = manager.withRepository(
+        this.policyClusterRepository_
+      )
 
-        let q
-        if (isString(selector.q)) {
-            q = selector.q
-            delete selector.q
+      const { policy: policies, user, ...rest } = policyClusterDto
+
+      let policyCluster = policyClusterRepository.create(rest)
+
+      if (isDefined(policies)) {
+        policyCluster.policy = []
+
+        if (policies?.length) {
+          const policyIds = policies.map((policy) => policy.id)
+          policyCluster.policy = policyIds.map((id) => ({ id }) as Policy)
         }
+      }
 
-        const query = buildQuery(
-            selector,
-            config
-        ) as FindManyOptions<PolicyCluster> & {
-            where: {}
-        } & ExtendedFindConfig<PolicyCluster>
+      if (isDefined(user)) {
+        policyCluster.user = []
 
-        if (q) {
-            const where = query.where as FindOptionsWhere<PolicyCluster>
-
-            delete where.name
-            delete where.created_at
-            delete where.updated_at
-
-            query.where = [
-                {
-                    ...where,
-                    name: ILike(`%${q}%`),
-                },
-            ]
+        if (user?.length) {
+          const userIds = user.map((user) => user)
+          policyCluster.user = userIds.map((id) => ({ id }) as User)
         }
+      }
 
-        return await policyClusterRepository.findAndCount(query)
+      policyCluster = await policyClusterRepository.save(policyCluster)
+
+      const result = await this.retrieve(policyCluster.id)
+
+      await this.eventBusService_
+        .withTransaction(manager)
+        .emit(PolicyClusterService.Events.CREATED, {})
+
+      return result
+    })
+  }
+
+  async retrieve(
+    policyClusterId: string,
+    config: FindConfig<PolicyCluster> = {}
+  ) {
+    if (!isDefined(policyClusterId)) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `"policyClusterId" must be defined`
+      )
     }
 
-    async create(policyClusterDto: CreatePolicyCluster): Promise<PolicyCluster> {
-        return await this.atomicPhase_(async (manager) => {
-            const policyClusterRepository = manager.withRepository(
-                this.policyClusterRepository_
-            )
+    const policyClusterRepository = this.activeManager_.withRepository(
+      this.policyClusterRepository_
+    )
 
-            const {policy: policies, user, ...rest} = policyClusterDto
+    const query = buildQuery({ id: policyClusterId }, config)
 
-            let policyCluster = policyClusterRepository.create(rest)
+    const policyCluster = await policyClusterRepository.findOne(query)
 
-            if (isDefined(policies)) {
-                policyCluster.policy = []
-
-                if (policies?.length) {
-                    const policyIds = policies.map((policy) => policy.id)
-                    policyCluster.policy = policyIds.map((id) => ({id}) as Policy)
-                }
-            }
-
-            if (isDefined(user)) {
-                policyCluster.user = []
-
-                if (user?.length) {
-                    const userIds = user.map((user) => user)
-                    policyCluster.user = userIds.map((id) => ({id}) as User)
-                }
-            }
-
-            policyCluster = await policyClusterRepository.save(policyCluster)
-
-            const result = await this.retrieve(policyCluster.id)
-
-            await this.eventBusService_
-                .withTransaction(manager)
-                .emit(PolicyClusterService.Events.CREATED, {})
-
-            return result
-        })
+    if (!policyCluster) {
+      throw new MedusaError(
+        MedusaError.Types.NOT_FOUND,
+        `Policy cluster with id: ${policyClusterId} was not found`
+      )
     }
+    return policyCluster
+  }
 
-    async retrieve(
-        policyClusterId: string,
-        config: FindConfig<PolicyCluster> = {}
-    ) {
-        if (!isDefined(policyClusterId)) {
-            throw new MedusaError(
-                MedusaError.Types.INVALID_DATA,
-                `"policyClusterId" must be defined`
-            )
+  async update(
+    policyClusterId: string,
+    update: UpdatePolicyCluster
+  ): Promise<PolicyCluster> {
+    return await this.atomicPhase_(async (manager) => {
+      const policyClusterRepository = manager.withRepository(
+        this.policyClusterRepository_
+      )
+
+      const policyCluster = await this.retrieve(policyClusterId)
+
+      const { policy: policies, ...rest } = update
+
+      if (isDefined(policies)) {
+        policyCluster.policy = []
+
+        if (policies?.length) {
+          const policyIds = policies.map((c) => c.id)
+          policyCluster.policy = policyIds.map((id) => ({ id }) as Policy)
         }
+      }
 
-        const policyClusterRepository = this.activeManager_.withRepository(
-            this.policyClusterRepository_
-        )
+      for (const [key, value] of Object.entries(rest)) {
+        policyCluster[key] = value
+      }
 
-        const query = buildQuery({id: policyClusterId}, config)
+      const result = await policyClusterRepository.save(policyCluster)
 
-        const policyCluster = await policyClusterRepository.findOne(query)
+      await this.eventBusService_
+        .withTransaction(manager)
+        .emit(PolicyClusterService.Events.UPDATED, {})
 
-        if (!policyCluster) {
-            throw new MedusaError(
-                MedusaError.Types.NOT_FOUND,
-                `Policy cluster with id: ${policyClusterId} was not found`
-            )
-        }
-        return policyCluster
-    }
+      return result
+    })
+  }
 
-    async update(
-        policyClusterId: string,
-        update: UpdatePolicyCluster
-    ): Promise<PolicyCluster> {
-        return await this.atomicPhase_(async (manager) => {
-            const policyClusterRepository = manager.withRepository(
-                this.policyClusterRepository_
-            )
+  async delete(policyClusterId: string): Promise<void> {
+    return await this.atomicPhase_(async (manager) => {
+      const policyClusterRepository = manager.withRepository(
+        this.policyClusterRepository_
+      )
 
-            const policyCluster = await this.retrieve(policyClusterId)
+      const policyCluster = await this.retrieve(policyClusterId)
 
-            const {policy: policies, ...rest} = update
+      if (!policyCluster) {
+        return Promise.resolve()
+      }
 
+      await policyClusterRepository.softRemove(policyCluster)
 
-            if (isDefined(policies)) {
-                policyCluster.policy = []
+      await this.eventBusService_
+        .withTransaction(manager)
+        .emit(PolicyClusterService.Events.DELETED, {})
 
-                if (policies?.length) {
-                    const policyIds = policies.map((c) => c.id)
-                    policyCluster.policy = policyIds.map((id) => ({id}) as Policy)
-                }
-            }
-
-            for (const [key, value] of Object.entries(rest)) {
-                policyCluster[key] = value
-            }
-
-            const result = await policyClusterRepository.save(policyCluster)
-
-            await this.eventBusService_
-                .withTransaction(manager)
-                .emit(PolicyClusterService.Events.UPDATED, {})
-
-            return result
-        })
-    }
-
-    async delete(policyClusterId: string): Promise<void> {
-        return await this.atomicPhase_(async (manager) => {
-            const policyClusterRepository = manager.withRepository(
-                this.policyClusterRepository_
-            )
-
-            const policyCluster = await this.retrieve(policyClusterId)
-
-            if (!policyCluster) {
-                return Promise.resolve()
-            }
-
-            await policyClusterRepository.softRemove(policyCluster)
-
-            await this.eventBusService_
-                .withTransaction(manager)
-                .emit(PolicyClusterService.Events.DELETED, {})
-
-            return Promise.resolve()
-        })
-    }
+      return Promise.resolve()
+    })
+  }
 }

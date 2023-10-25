@@ -12,7 +12,10 @@ export default function (rootDirectory: string) {
 
   const permissionRouter = getAdminRouter(adminCors)
 
-  const defaultRouters = [permissionRouter, createPermissionMiddleware(adminCors)]
+  const defaultRouters = [
+    permissionRouter,
+    createPermissionMiddleware(adminCors),
+  ]
 
   return [...defaultRouters]
 }

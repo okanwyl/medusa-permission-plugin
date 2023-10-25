@@ -26,7 +26,6 @@ export class AdminPolicyReq {
   @IsNotEmpty()
   name: string
 
-
   @IsString()
   @IsOptional()
   description?: string
@@ -38,5 +37,4 @@ export class AdminPolicyReq {
   @IsString()
   @IsNotEmpty()
   base_router: string
-
 }

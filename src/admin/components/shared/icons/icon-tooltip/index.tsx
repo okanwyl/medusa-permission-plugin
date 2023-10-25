@@ -14,7 +14,6 @@ type IconTooltipProps = TooltipProps & {
 
 const IconTooltip: React.FC<IconTooltipProps> = ({
   type = "info",
-  size = 16,
   content,
   ...props
 }) => {

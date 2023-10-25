@@ -41,7 +41,6 @@ export class AdminGetPolicyParams extends AdminGetPolicyPaginationParams {
   @IsString()
   name?: string
 
-
   @IsOptional()
   @ValidateNested()
   @Type(() => DateComparisonOperator)

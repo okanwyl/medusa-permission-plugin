@@ -50,5 +50,4 @@ export class AdminPostPolicyReq {
   @IsNotEmpty()
   @IsOptional()
   base_router?: string
-
 }

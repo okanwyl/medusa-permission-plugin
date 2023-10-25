@@ -5,7 +5,9 @@ import { Button } from "@medusajs/ui"
 import Actionables, { ActionType } from "../actionables"
 
 type BodyCardProps = {
-  title?: string | JSX.Element | React.ReactNode
+  // FIXME: Is JSX Required?
+  // Original line:   title?: string | JSX.Element | React.ReactNode
+  title?: string | Element | React.ReactNode
   subtitle?: string
   events?: {
     label: string

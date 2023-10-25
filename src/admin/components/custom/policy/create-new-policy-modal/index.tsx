@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react"
 import {
   FocusModal,
   Input,
@@ -10,7 +10,7 @@ import {
   Badge,
 } from "@medusajs/ui"
 import { mutateAdminPolicy } from "../../../hooks/policy"
-import { SettingProps } from "@medusajs/admin";
+import { SettingProps } from "@medusajs/admin"
 
 type createPolicyModalContextType = {
   showNewPolicy: boolean
@@ -37,27 +37,26 @@ export const CreatePolicyModalProvider = ({ children }) => {
       {children}
     </CreatePolicyModalContext.Provider>
   )
-};
+}
 
 export const useCreatePolicyModal = () => {
   return useContext(CreatePolicyModalContext)
-};
+}
 
 export function CreatePolicyModal({ notify }: SettingProps) {
   const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal()
 
-
-  const [policyName, setPolicyName] = useState("");
-  const [description, setDescription] = useState("");
-  const [method, setMethod] = useState("GET");
-  const [baseRouter, setBaseRouter] = useState("");
+  const [policyName, setPolicyName] = useState("")
+  const [description, setDescription] = useState("")
+  const [method, setMethod] = useState("GET")
+  const [baseRouter, setBaseRouter] = useState("")
 
   const [errors, setErrors] = useState<ErrorsType>({})
 
   const { mutate, isLoading } = mutateAdminPolicy()
 
   const validate = () => {
-    const validationErrors = { ...errors };
+    const validationErrors = { ...errors }
     if (!policyName.trim()) {
       validationErrors.policyName = "Policy name is required"
     } else {
@@ -75,15 +74,13 @@ export function CreatePolicyModal({ notify }: SettingProps) {
 
     setErrors(validationErrors)
     return Object.keys(validationErrors).length === 0
-
   }
-
 
   const clearAllStates = () => {
     setPolicyName("")
-    setDescription("");
-    setMethod("GET");
-    setBaseRouter("");
+    setDescription("")
+    setMethod("GET")
+    setBaseRouter("")
     setErrors({})
   }
 
@@ -91,7 +88,6 @@ export function CreatePolicyModal({ notify }: SettingProps) {
     if (!validate()) {
       return
     }
-
 
     const args = {
       name: policyName,
@@ -101,7 +97,7 @@ export function CreatePolicyModal({ notify }: SettingProps) {
     }
 
     return mutate(args, {
-      onSuccess: (data) => {
+      onSuccess: () => {
         clearAllStates()
         setShowNewPolicy(false)
         notify.success("success", "Successfully created policy")
@@ -175,7 +171,7 @@ export function CreatePolicyModal({ notify }: SettingProps) {
                 Method
               </Label>
 
-              <RadioGroup value={method} onChange={(value) => {}}>
+              <RadioGroup value={method} onChange={() => {}}>
                 <div className="flex items-center gap-x-3">
                   <RadioGroup.Item
                     value="GET"
@@ -234,7 +230,8 @@ export function CreatePolicyModal({ notify }: SettingProps) {
                 Base Router
               </Label>
               <Text className="text-ui-fg-subtle">
-                Select base router for your policy. The permission middleware will listen this router.
+                Select base router for your policy. The permission middleware
+                will listen this router.
               </Text>
               <Input
                 id="base_router"

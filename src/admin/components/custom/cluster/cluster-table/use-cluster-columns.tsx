@@ -3,7 +3,6 @@ import { useMemo } from "react"
 import { Table } from "@medusajs/ui"
 
 const useClusterColumn = () => {
-
   const columns = useMemo(
     () => [
       {

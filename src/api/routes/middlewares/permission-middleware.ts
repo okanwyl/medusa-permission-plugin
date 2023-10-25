@@ -1,31 +1,41 @@
-import {UserService} from "@medusajs/medusa"
-import {User} from "../../../models/user";
-import PermissionsService from "../../../services/permissions";
-import {Request, Response, NextFunction} from "express";
-import {MedusaError} from "medusa-core-utils";
+import { UserService } from "@medusajs/medusa"
+import { User } from "../../../models/user"
+import PermissionsService from "../../../services/permissions"
+import { Request, Response, NextFunction } from "express"
+import { MedusaError } from "medusa-core-utils"
 
-export async function permissionMiddleware(req: Request, res: Response, next: NextFunction) {
-    let loggedInUser: User | null = null
+export async function permissionMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  let loggedInUser: User | null = null
 
-    if (req.user && req.user.userId) {
-        const userService = req.scope.resolve("userService") as UserService
-        // @ts-ignore
-        loggedInUser = await userService.retrieve(req.user.userId, {relations: ["policy_cluster"]})
-    }
+  if (req.user && req.user.userId) {
+    const userService = req.scope.resolve("userService") as UserService
+    // @ts-ignore
+    loggedInUser = await userService.retrieve(req.user.userId, {
+      relations: ["policy_cluster"],
+    })
+  }
 
+  const permissionsService: PermissionsService = req.scope.resolve(
+    "permissionsService"
+  ) as PermissionsService
 
-    const permissionsService: PermissionsService = req.scope.resolve("permissionsService") as PermissionsService
+  await permissionsService.init()
 
+  const wordsArray = req.path.split("/").filter(Boolean)
 
-    await permissionsService.init();
+  const permission = permissionsService.checkPermission(
+    loggedInUser.policy_cluster.id,
+    wordsArray[0],
+    req.method
+  )
 
-    const wordsArray = req.path.split('/').filter(Boolean);
+  if (!permission) {
+    return res.status(401).json({ message: "Not allowed" })
+  }
 
-    const permission = permissionsService.checkPermission(loggedInUser.policy_cluster.id, wordsArray[0], req.method)
-
-    if (!permission) {
-        return res.status(401).json({message: "Not allowed"})
-    }
-
-    next()
+  next()
 }

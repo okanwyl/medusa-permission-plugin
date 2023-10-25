@@ -4,11 +4,12 @@ import {
   Index,
   BeforeInsert,
   JoinTable,
-  ManyToMany, OneToMany,
+  ManyToMany,
+  OneToMany,
 } from "typeorm"
 import { generateEntityId } from "@medusajs/medusa/dist/utils"
 import _ from "lodash"
-import {SoftDeletableEntity} from "@medusajs/medusa"
+import { SoftDeletableEntity } from "@medusajs/medusa"
 import { Policy } from "./policy"
 import { User } from "./user"
 

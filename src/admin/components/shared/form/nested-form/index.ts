@@ -1,4 +1,3 @@
-
 import { get } from "lodash"
 import { FieldPath, FieldValues, UseFormReturn } from "react-hook-form"
 import { Get } from "type-fest"
@@ -24,7 +23,7 @@ export function nestedForm<TValues extends FieldValues>(
 ): NestedForm<TValues>
 export function nestedForm<
   TValues extends FieldValues,
-  TPath extends FieldPath<TValues>
+  TPath extends FieldPath<TValues>,
 >(
   form: UseFormReturn<TValues> | NestedForm<TValues>,
   path: TPath

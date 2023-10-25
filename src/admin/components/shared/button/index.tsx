@@ -10,6 +10,7 @@ export type ButtonProps = {
   spinnerConfig?: SpinnerProps
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
+// eslint-disable-next-line react/display-name
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
