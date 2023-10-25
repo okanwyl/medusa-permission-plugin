@@ -11,13 +11,13 @@ import { FindManyOptions, FindOptionsWhere, ILike } from "typeorm"
 import { IEventBusService } from "@medusajs/types"
 import { Policy } from "../models/policy"
 import { isDefined, MedusaError } from "medusa-core-utils"
-import { PolicyCluster } from "src/models/policy-cluster"
 import PolicyClusterRepository from "../repositories/policy-cluster"
 import {
   CreatePolicyCluster,
   UpdatePolicyCluster,
 } from "../types/policy-cluster"
 import { User } from "../models/user"
+import { PolicyCluster } from "../models/policy-cluster"
 
 type ListAndCountSelector = Selector<PolicyCluster> & {
   q?: string

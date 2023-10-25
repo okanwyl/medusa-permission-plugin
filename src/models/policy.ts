@@ -1,6 +1,5 @@
 import { Entity, Column, Index, BeforeInsert } from "typeorm"
 import { generateEntityId } from "@medusajs/medusa/dist/utils"
-import _ from "lodash"
 import { SoftDeletableEntity } from "@medusajs/medusa"
 
 @Entity()
