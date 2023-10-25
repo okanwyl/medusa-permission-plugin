@@ -9,8 +9,8 @@ export default async (req: Request, res: Response) => {
     "policyClusterService"
   )
 
-  const policyGroup = await policyClusterService.retrieve(id, {
+  const policyCluster = await policyClusterService.retrieve(id, {
     relations: defaultAdminPolicyClusterRelations,
   })
-  res.status(200).json({ policy_cluster: policyGroup })
+  res.status(200).json({ policy_cluster: policyCluster })
 }

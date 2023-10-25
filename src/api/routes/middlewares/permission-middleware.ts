@@ -2,6 +2,7 @@ import {UserService} from "@medusajs/medusa"
 import {User} from "../../../models/user";
 import PermissionsService from "../../../services/permissions";
 import {Request, Response, NextFunction} from "express";
+import {MedusaError} from "medusa-core-utils";
 
 export async function permissionMiddleware(req: Request, res: Response, next: NextFunction) {
     let loggedInUser: User | null = null
@@ -18,8 +19,13 @@ export async function permissionMiddleware(req: Request, res: Response, next: Ne
 
     await permissionsService.init();
 
-    // TODO: use this
-    console.log(req.path)
-    console.log(loggedInUser)
+    const wordsArray = req.path.split('/').filter(Boolean);
+
+    const permission = permissionsService.checkPermission(loggedInUser.policy_cluster.id, wordsArray[0], req.method)
+
+    if (!permission) {
+        return res.status(401).json({message: "Not allowed"})
+    }
+
     next()
 }

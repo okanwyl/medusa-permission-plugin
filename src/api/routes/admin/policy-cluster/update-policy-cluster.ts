@@ -30,11 +30,11 @@ export default async (req: Request, res: Response) => {
       .update(id, validatedBody)
   })
 
-  const policiesGroup = await policyClusterService.retrieve(updated.id, {
+  const policyCluster = await policyClusterService.retrieve(updated.id, {
     relations: defaultAdminPolicyClusterRelations,
   })
 
-  res.status(200).json({ policy_cluster: policiesGroup })
+  res.status(200).json({ policy_cluster: policyCluster })
 }
 export class AdminPostPolicyClusterReq {
   @IsString()

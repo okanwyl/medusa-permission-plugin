@@ -61,7 +61,7 @@ const Policy = ({notify}: SettingProps) => {
         <CreatePolicyModalProvider>
             <Routes>
                 <Route index element={<PolicyIndex notify={notify}/>}/>
-                <Route path="/a/groups/" element={<ClusterPage/>}/>
+                {/*<Route path="/a/groups/" element={<ClusterPage/>}/>*/}
             </Routes>
         </CreatePolicyModalProvider>
     )

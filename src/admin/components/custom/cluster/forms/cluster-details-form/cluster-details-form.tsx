@@ -93,7 +93,7 @@ const ClusterDetailsGeneral = ({
                                 <Textarea
                                     {...field}
                                     placeholder={
-                                        "This agent group can't change products, and can only list orders."
+                                        "This agent cluster can't change products, and can only list orders."
                                     }
                                 />
                             </Form.Control>

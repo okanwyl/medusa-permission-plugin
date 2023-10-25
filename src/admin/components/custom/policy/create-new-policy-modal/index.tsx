@@ -162,7 +162,7 @@ export function CreatePolicyModal({ notify }: SettingProps) {
               </Label>
               <Input
                 id="description"
-                placeholder="Manages creating product workflow, if is this attached policy group can create products"
+                placeholder="Manages creating product workflow, if is this attached policy cluster can create products"
                 onChange={(e) => setDescription(e.target.value)}
                 style={errors.description ? { borderColor: "red" } : {}}
               />

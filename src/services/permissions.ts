@@ -39,9 +39,6 @@ export default class PermissionsService extends TransactionBaseService {
         }
     }
 
-    get policiesHashmap(): Map<string, Policy[]> {
-        return this._policiesHashmap;
-    }
 
     async createPolicyHashmap(): Promise<void> {
         const clusterIdMap = new Map<string, Policy[]>();
@@ -57,6 +54,15 @@ export default class PermissionsService extends TransactionBaseService {
         });
 
         this._policiesHashmap = clusterIdMap;
+    }
+
+    checkPermission(clusterId: string, baseRouter: string, reqMethod: string): boolean {
+        const hashedCluster = this._policiesHashmap.get(clusterId);
+        if (hashedCluster) {
+            return hashedCluster.some(policy => policy.base_router === baseRouter && policy.method === reqMethod);
+        }
+
+        return false;
     }
 
 }
