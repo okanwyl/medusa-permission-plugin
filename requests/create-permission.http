@@ -1,9 +1,0 @@
-GET http://localhost:9000/admin/policy/
-Content-Type: application/json
-
-{
-  "name": "a2",
-  "method": "POST",
-  "base_router": "defined"
-}
-
