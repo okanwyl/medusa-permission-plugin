@@ -31,7 +31,7 @@ export async function permissionMiddleware(
   }
 
   const permission = permissionsService.checkPermission(
-    loggedInUser.policy_cluster.id,
+    loggedInUser.policy_cluster?.id,
     wordsArray[0],
     req.method
   )

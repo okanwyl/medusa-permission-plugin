@@ -5,9 +5,9 @@ import PlusIcon from "../../components/shared/icons/plus-icon"
 import { useNavigate } from "react-router-dom"
 import TableViewHeader from "../../components/shared/custom-table/table-view-header"
 import BackButton from "../../components/shared/back-button"
-import CreateNewClusterModal from "../../components/custom/cluster/create-new-cluster-modal/page"
+import { CreateNewClusterModal } from "../../components/custom/cluster/create-new-cluster-modal/page"
 
-const ClusterPage = () => {
+export const ClusterPage = () => {
   const navigate = useNavigate()
   const view = "cluster"
   const [open, setOpen] = useState(false)
@@ -60,4 +60,5 @@ const ClusterPage = () => {
   )
 }
 
+// @ts-ignore
 export default ClusterPage

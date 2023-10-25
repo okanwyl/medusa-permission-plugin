@@ -17,7 +17,9 @@
     "jsx": "react-jsx",
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "checkJs": false
+    "checkJs": false,
+    "noEmit": false,
+    "strict": false,
   },
   "include": ["src/"],
   "exclude": [
@@ -25,6 +27,11 @@
     "**/__fixtures__",
     "node_modules",
     "build",
-    ".cache"
+    ".cache",
+    "dist",
+    "tests",
+    "**/*.spec.js",
+    "**/*.spec.ts",
+    ".eslintrc.js"
   ]
 }

@@ -37,19 +37,15 @@ type AdminPolicyQueryType = AdminPolicyQuery
 type AdminPolicyResType = AdminListPolicyRes
 
 export function useAdminPolicy(queryObject: any) {
-  const { data, isLoading, isRefetching, isError, isSuccess } =
-    useAdminCustomQuery<AdminPolicyQueryType, AdminPolicyResType>(
-      `/policy`,
-      ["admin-policy-list"],
-      queryObject
-    )
+  const { data, isLoading, isRefetching } = useAdminCustomQuery<
+    AdminPolicyQueryType,
+    AdminPolicyResType
+  >(`/policy`, ["admin-policy-list"], queryObject)
 
   return {
-    policy: data?.policy ?? [],
+    data,
     isLoading,
     isRefetching,
-    isError,
-    isSuccess,
     count: data?.count,
   }
 }

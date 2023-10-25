@@ -185,7 +185,7 @@ const ClusterPolicyForm = ({ form, policies }: ClusterPolicyFormProp) => {
   const [query, setQuery] = React.useState<string>("")
   const debouncedQuery = useDebounce(query, 500)
 
-  const { policy, count, isLoading } = useAdminPolicy({
+  const { data, count, isLoading } = useAdminPolicy({
     limit: PAGE_SIZE,
     offset,
     q: debouncedQuery,
@@ -200,7 +200,7 @@ const ClusterPolicyForm = ({ form, policies }: ClusterPolicyFormProp) => {
 
   const table = useReactTable({
     columns,
-    data: (policy as Policy[] | undefined) ?? [],
+    data: (data?.policy as Policy[] | undefined) ?? [],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getRowId: (row) => row.id,
@@ -238,7 +238,7 @@ const ClusterPolicyForm = ({ form, policies }: ClusterPolicyFormProp) => {
     )
   }
 
-  if (!policy) {
+  if (!data?.policy) {
     return (
       <div className="flex h-full w-full items-center justify-center gap-x-2">
         <ExclamationCircle />

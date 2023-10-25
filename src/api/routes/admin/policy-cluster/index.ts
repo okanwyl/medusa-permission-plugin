@@ -1,11 +1,10 @@
 import { Router } from "express"
 import "reflect-metadata"
 import { transformBody } from "@medusajs/medusa"
-import middlewares, {
-  transformQuery,
-} from "@medusajs/medusa/dist/api/middlewares"
 import { AdminGetPolicyClusterParams } from "./list-policy-cluster"
 import { AdminPostPolicyClusterReq } from "./update-policy-cluster"
+import { transformQuery } from "@medusajs/medusa"
+import middlewares from "@medusajs/medusa/dist/api/middlewares"
 
 export default (app) => {
   const route = Router()

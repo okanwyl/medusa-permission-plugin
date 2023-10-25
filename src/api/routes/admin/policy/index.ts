@@ -1,12 +1,11 @@
 import { Router } from "express"
 import "reflect-metadata"
 import { transformBody } from "@medusajs/medusa"
-import middlewares, {
-  transformQuery,
-} from "@medusajs/medusa/dist/api/middlewares"
 import { AdminGetPolicyParams } from "./list-policy"
 import { AdminPolicyReq } from "./create-policy"
 import { AdminPostPolicyReq } from "./update-policy"
+import { transformQuery } from "@medusajs/medusa"
+import middlewares from "@medusajs/medusa/dist/api/middlewares"
 
 export default (app) => {
   const route = Router()

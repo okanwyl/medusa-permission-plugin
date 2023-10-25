@@ -2,12 +2,12 @@ import { Fragment, useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { usePagination, useTable } from "react-table"
 import TableContainer from "../../../shared/custom-table/table-container"
-import usePolicyColumn from "./use-policy-columns"
 import { usePolicyFilters } from "./use-policy-filters"
 import Table from "../../../shared/custom-table"
 import { useAdminPolicy } from "../../../hooks/policy"
 import { ExclamationCircle } from "@medusajs/icons"
 import { Text } from "@medusajs/ui"
+import { usePolicyColumn } from "./use-policy-columns"
 
 const DEFAULT_PAGE_SIZE = 15
 
@@ -29,8 +29,7 @@ const PolicyTable = () => {
   const [query, setQuery] = useState(filtersOnLoad?.query)
   const [numPages, setNumPages] = useState(0)
 
-  const { policy, isLoading, isRefetching, count, isError } =
-    useAdminPolicy(queryObject)
+  const { data, isLoading, isRefetching, count } = useAdminPolicy(queryObject)
 
   useEffect(() => {
     const controlledPageCount = Math.ceil(count! / queryObject.limit)
@@ -39,18 +38,7 @@ const PolicyTable = () => {
 
   const [columns] = usePolicyColumn()
 
-  if (isError) {
-    return (
-      <div className="flex h-full w-full items-center justify-center gap-x-2">
-        <ExclamationCircle />
-        <Text className="text-ui-fg-subtle">
-          {"Something happened, try again later."}
-        </Text>
-      </div>
-    )
-  }
-
-  if (!policy) {
+  if (!data?.policy) {
     return (
       <div className="flex h-full w-full items-center justify-center gap-x-2">
         <ExclamationCircle />
@@ -76,7 +64,7 @@ const PolicyTable = () => {
   } = useTable(
     {
       columns,
-      data: policy ?? [],
+      data: data?.policy ?? [],
       manualPagination: true,
       initialState: {
         pageSize: lim,

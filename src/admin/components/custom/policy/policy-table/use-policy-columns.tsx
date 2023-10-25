@@ -4,7 +4,7 @@ import { Badge, Table } from "@medusajs/ui"
 import Tooltip from "../../../shared/tooltip"
 import { InformationCircle } from "@medusajs/icons"
 
-const usePolicyColumn = () => {
+export const usePolicyColumn = () => {
   const decideMethod = (status) => {
     switch (status) {
       case "GET":
@@ -111,5 +111,3 @@ const usePolicyColumn = () => {
 
   return [columns]
 }
-
-export default usePolicyColumn

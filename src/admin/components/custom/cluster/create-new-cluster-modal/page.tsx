@@ -45,8 +45,8 @@ type StepStatus = {
   [key in Tab]: ProgressStatus
 }
 
-const CreateNewClusterModal = ({ open, setOpen }) => {
-  // const [selectedIds, setSelectedIds] = React.useState<string[]>([])
+export const CreateNewClusterModal = ({ open, setOpen }) => {
+  const [, setSelectedIds] = React.useState<string[]>([])
 
   const [tab, setTab] = React.useState<Tab>(Tab.DETAILS)
   const [status, setStatus] = React.useState<StepStatus>({
@@ -82,9 +82,7 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
   const {
     trigger,
     reset,
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    // FIXME: Use setError
-    // eslint-disable-next-line unused-imports/no-unused-vars
+    getValues,
     handleSubmit,
     formState: { isDirty },
   } = form
@@ -94,6 +92,7 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
   const onCloseModal = React.useCallback(() => {
     setOpen(false)
     setTab(Tab.DETAILS)
+    setSelectedIds([])
     setStatus({
       [Tab.DETAILS]: "not-started",
       [Tab.POLICIES]: "not-started",
@@ -199,13 +198,13 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
 
       return
     }
-
+    getValues("products.ids")
     setTab(Tab.USERS)
     setStatus((prev) => ({
       ...prev,
       [Tab.POLICIES]: "completed",
     }))
-  }, [trigger])
+  }, [trigger, getValues])
 
   const onNext = React.useCallback(async () => {
     switch (tab) {
@@ -358,5 +357,3 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
     </FocusModal>
   )
 }
-
-export default CreateNewClusterModal

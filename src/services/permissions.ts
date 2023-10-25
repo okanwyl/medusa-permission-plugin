@@ -1,7 +1,7 @@
 import { Lifetime } from "awilix"
 import { TransactionBaseService } from "@medusajs/medusa"
 import { Policy } from "../models/policy"
-import PolicyClusterRepository from "../repositories/policy-cluster";
+import PolicyClusterRepository from "../repositories/policy-cluster"
 
 export default class PermissionsService extends TransactionBaseService {
   static LIFETIME = Lifetime.SINGLETON
@@ -53,6 +53,10 @@ export default class PermissionsService extends TransactionBaseService {
     baseRouter: string,
     reqMethod: string
   ): boolean {
+    if (!clusterId) {
+      return false
+    }
+
     const hashedCluster = this._policiesHashmap.get(clusterId)
     if (hashedCluster) {
       return hashedCluster.some(
