@@ -1,8 +1,9 @@
 import {UserService} from "@medusajs/medusa"
 import {User} from "../../../models/user";
 import PermissionsService from "../../../services/permissions";
+import {Request, Response, NextFunction} from "express";
 
-export async function permissionMiddleware(req, res, next) {
+export async function permissionMiddleware(req: Request, res: Response, next: NextFunction) {
     let loggedInUser: User | null = null
 
     if (req.user && req.user.userId) {
@@ -14,21 +15,11 @@ export async function permissionMiddleware(req, res, next) {
 
     const permissionsService: PermissionsService = req.scope.resolve("permissionsService") as PermissionsService
 
-    // const policies = await permissionsService.fetchPolicies()
-    // console.log(await permissionsService.createPolicyHashmap());
+
     await permissionsService.init();
-    console.log(permissionsService.policiesHashmap);
 
+    // TODO: use this
+    console.log(req.path)
     console.log(loggedInUser)
-    req.scope.register({
-        loggedInUser: {
-            resolve: () => loggedInUser,
-        },
-    })
-
-
-    console.log(req.originalUrl)
-    console.log(req.method)
-
     next()
 }

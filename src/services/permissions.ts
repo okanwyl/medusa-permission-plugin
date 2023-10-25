@@ -29,11 +29,11 @@ export default class PermissionsService extends TransactionBaseService {
     }
 
     async init(): Promise<void> {
-        if (this._initialized) return;  // If already initialized, return immediately
+        if (this._initialized) return;
 
         try {
             await this.createPolicyHashmap();
-            this._initialized = true;  // Set the flag after successful initialization
+            this._initialized = true;
         } catch (err) {
             console.error(`Cluster Hashmap creation error: ${err}`);
         }

@@ -1,5 +1,5 @@
 import configLoader from "@medusajs/medusa/dist/loaders/config"
-import connectRouterOverrider from "./routes/create-product"
+import createPermissionMiddleware from "./routes"
 import { getAdminRouter } from "./routes/admin"
 
 export default function (rootDirectory: string) {
@@ -12,7 +12,7 @@ export default function (rootDirectory: string) {
 
   const permissionRouter = getAdminRouter(adminCors)
 
-  const defaultRouters = [permissionRouter, connectRouterOverrider(adminCors)]
+  const defaultRouters = [permissionRouter, createPermissionMiddleware(adminCors)]
 
   return [...defaultRouters]
 }
