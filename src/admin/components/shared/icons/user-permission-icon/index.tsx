@@ -1,5 +1,5 @@
 import React from "react"
-import IconProps from "src/admin/types/icon-props"
+import IconProps from "../../../../types/icon-props";
 
 const LockIcon: React.FC<IconProps> = ({
   size = "24",

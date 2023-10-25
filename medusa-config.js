@@ -34,39 +34,15 @@ const DATABASE_URL =
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379"
 
 const plugins = [
-  `medusa-fulfillment-manual`,
-  `medusa-payment-manual`,
   {
-    resolve: `@medusajs/file-local`,
+    resolve: `medusa-permission-plugin`,
     options: {
-      upload_dir: "uploads",
-    },
-  },
-  {
-    resolve: "@medusajs/admin",
-    /** @type {import('@medusajs/admin').PluginOptions} */
-    options: {
-      autoRebuild: true,
-      develop: {
-        open: process.env.OPEN_BROWSER !== "false",
-      },
+      enableUI: true
     },
   },
 ]
 
 const modules = {
-  /* eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },*/
 }
 
 /** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */

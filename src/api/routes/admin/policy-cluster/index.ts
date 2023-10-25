@@ -1,10 +1,9 @@
 import { Router } from "express"
 import "reflect-metadata"
-import { PaginatedResponse, transformBody } from "@medusajs/medusa"
+import { transformBody } from "@medusajs/medusa"
 import middlewares, {
   transformQuery,
 } from "@medusajs/medusa/dist/api/middlewares"
-import { AdminPolicyClusterReq } from "./create-policy-cluster"
 import { AdminGetPolicyClusterParams } from "./list-policy-cluster"
 import { AdminPostPolicyClusterReq } from "./update-policy-cluster"
 

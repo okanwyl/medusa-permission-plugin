@@ -2,7 +2,6 @@ import { UserService } from "@medusajs/medusa"
 import { User } from "../../../models/user"
 import PermissionsService from "../../../services/permissions"
 import { Request, Response, NextFunction } from "express"
-import { MedusaError } from "medusa-core-utils"
 
 export async function permissionMiddleware(
   req: Request,
@@ -26,6 +25,10 @@ export async function permissionMiddleware(
   await permissionsService.init()
 
   const wordsArray = req.path.split("/").filter(Boolean)
+
+  if (!loggedInUser) {
+    return res.status(401).json({ message: "Not allowed" })
+  }
 
   const permission = permissionsService.checkPermission(
     loggedInUser.policy_cluster.id,

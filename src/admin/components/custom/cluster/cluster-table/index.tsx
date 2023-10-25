@@ -75,7 +75,7 @@ const ClusterTable = () => {
     }, 400)
 
     return () => clearTimeout(delayDebounceFn)
-  }, [query])
+  }, [gotoPage, query, reset, setFreeText])
 
   const handleNext = () => {
     if (canNextPage) {

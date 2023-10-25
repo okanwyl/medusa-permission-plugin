@@ -8,7 +8,6 @@ import {
 import { Request, Response } from "express"
 import { EntityManager } from "typeorm"
 import { defaultAdminPolicyClusterRelations } from "."
-import PolicyService from "../../../../services/policy"
 import PolicyClusterService from "../../../../services/policy-cluster"
 import { Type } from "class-transformer"
 import { PolicyArrayInputReq } from "../../../../types/policy-cluster"

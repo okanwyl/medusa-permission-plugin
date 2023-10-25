@@ -83,10 +83,8 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
     trigger,
     reset,
     // eslint-disable-next-line unused-imports/no-unused-vars
-    getValues,
     // FIXME: Use setError
     // eslint-disable-next-line unused-imports/no-unused-vars
-    setError,
     handleSubmit,
     formState: { isDirty },
   } = form
@@ -167,12 +165,9 @@ const CreateNewClusterModal = ({ open, setOpen }) => {
     })()
   }, [handleSubmit, mutate, onCloseModal, prompt])
 
-  const onTabChange = React.useCallback(
-    async (value: Tab) => {
-      setTab(value)
-    },
-    [tab]
-  )
+  const onTabChange = React.useCallback(async (value: Tab) => {
+    setTab(value)
+  }, [])
 
   const onValidateDetails = React.useCallback(async () => {
     const result = await trigger("details")

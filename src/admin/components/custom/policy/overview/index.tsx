@@ -18,7 +18,7 @@ const PolicyIndex = ({ notify }: SettingProps) => {
   const view = "policy"
   // FIXME: Migrate to zod thing.
   // eslint-disable-next-line unused-imports/no-unused-vars
-  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal()
+  const { setShowNewPolicy } = useCreatePolicyModal()
 
   const actions = useMemo(() => {
     return [
