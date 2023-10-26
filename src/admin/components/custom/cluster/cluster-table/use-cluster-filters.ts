@@ -148,15 +148,9 @@ export const useClusterFilters = (
     return qs.stringify(obj, { skipNulls: true })
   }
 
-  const queryObject = useMemo(() => getQueryObject(), [getQueryObject])
-  const representationObject = useMemo(
-    () => getRepresentationObject(),
-    [getRepresentationObject]
-  )
-  const representationString = useMemo(
-    () => getRepresentationString(),
-    [getRepresentationString]
-  )
+  const queryObject = useMemo(() => getQueryObject(), [state])
+  const representationObject = useMemo(() => getRepresentationObject(), [state])
+  const representationString = useMemo(() => getRepresentationString(), [state])
 
   return {
     ...state,

@@ -46,7 +46,7 @@ type StepStatus = {
 }
 
 export const CreateNewClusterModal = ({ open, setOpen }) => {
-  const [, setSelectedIds] = React.useState<string[]>([])
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([])
 
   const [tab, setTab] = React.useState<Tab>(Tab.DETAILS)
   const [status, setStatus] = React.useState<StepStatus>({
@@ -83,6 +83,7 @@ export const CreateNewClusterModal = ({ open, setOpen }) => {
     trigger,
     reset,
     getValues,
+    setError,
     handleSubmit,
     formState: { isDirty },
   } = form
@@ -99,7 +100,7 @@ export const CreateNewClusterModal = ({ open, setOpen }) => {
       [Tab.USERS]: "not-started",
     })
     reset()
-  }, [reset, setOpen])
+  }, [reset])
 
   const onModalStateChange = React.useCallback(
     async (open: boolean) => {
@@ -119,7 +120,7 @@ export const CreateNewClusterModal = ({ open, setOpen }) => {
 
       setOpen(open)
     },
-    [isDirty, setOpen, prompt, onCloseModal]
+    [isDirty, promptTitle, promptExitDescription, prompt, onCloseModal]
   )
 
   const onSubmit = React.useCallback(async () => {

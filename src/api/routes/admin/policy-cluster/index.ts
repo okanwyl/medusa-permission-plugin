@@ -1,16 +1,19 @@
 import { Router } from "express"
 import "reflect-metadata"
-import { transformBody } from "@medusajs/medusa"
+import { transformBody, transformQuery } from "@medusajs/medusa"
 import { AdminGetPolicyClusterParams } from "./list-policy-cluster"
 import { AdminPostPolicyClusterReq } from "./update-policy-cluster"
-import { transformQuery } from "@medusajs/medusa"
-import middlewares from "@medusajs/medusa/dist/api/middlewares"
+import { AdminPolicyClusterReq } from "./create-policy-cluster"
 
 export default (app) => {
   const route = Router()
   app.use("/policy-cluster", route)
 
-  route.post("/", middlewares.wrap(require("./create-policy-cluster").default))
+  route.post(
+    "/",
+    transformBody(AdminPolicyClusterReq),
+    require("./create-policy-cluster").default
+  )
 
   route.get(
     "/",
@@ -18,7 +21,7 @@ export default (app) => {
       defaultRelations: defaultAdminPolicyClusterRelations,
       isList: true,
     }),
-    middlewares.wrap(require("./list-policy-cluster").default)
+    require("./list-policy-cluster").default
   )
 
   const policiesRouter = Router({ mergeParams: true })
@@ -27,18 +30,12 @@ export default (app) => {
   policiesRouter.post(
     "/",
     transformBody(AdminPostPolicyClusterReq),
-    middlewares.wrap(require("./update-policy-cluster").default)
+    require("./update-policy-cluster").default
   )
 
-  policiesRouter.delete(
-    "/",
-    middlewares.wrap(require("./delete-policy-cluster").default)
-  )
+  policiesRouter.delete("/", require("./delete-policy-cluster").default)
 
-  policiesRouter.get(
-    "/",
-    middlewares.wrap(require("./get-policy-cluster").default)
-  )
+  policiesRouter.get("/", require("./get-policy-cluster").default)
 
   return app
 }

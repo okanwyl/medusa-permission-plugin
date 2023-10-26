@@ -5,8 +5,6 @@ import TableContainer from "../../../shared/custom-table/table-container"
 import { usePolicyFilters } from "./use-policy-filters"
 import Table from "../../../shared/custom-table"
 import { useAdminPolicy } from "../../../hooks/policy"
-import { ExclamationCircle } from "@medusajs/icons"
-import { Text } from "@medusajs/ui"
 import { usePolicyColumn } from "./use-policy-columns"
 
 const DEFAULT_PAGE_SIZE = 15
@@ -37,15 +35,6 @@ const PolicyTable = () => {
   }, [count, queryObject])
 
   const [columns] = usePolicyColumn()
-
-  if (!data?.policy) {
-    return (
-      <div className="flex h-full w-full items-center justify-center gap-x-2">
-        <ExclamationCircle />
-        <Text className="text-ui-fg-subtle">{"No policy found."}</Text>
-      </div>
-    )
-  }
 
   const {
     getTableProps,
@@ -88,7 +77,7 @@ const PolicyTable = () => {
     }, 400)
 
     return () => clearTimeout(delayDebounceFn)
-  }, [gotoPage, query, reset, setFreeText])
+  }, [query])
 
   const handleNext = () => {
     if (canNextPage) {

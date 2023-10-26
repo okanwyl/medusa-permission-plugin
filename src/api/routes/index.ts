@@ -7,7 +7,7 @@ import { errorHandler } from "@medusajs/medusa"
 const router = Router()
 export default function createPermissionMiddleware(adminConfiguration) {
   router.use(
-    /^\/admin(?!\/auth(\/|$))/,
+    /^\/admin(?!\/auth(\/|$))(?!\/users(\/|$))(?!\/invites(\/|$))/,
     cors(adminConfiguration),
     authenticate(),
     permissionMiddleware,

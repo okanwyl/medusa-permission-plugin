@@ -3,20 +3,16 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested,
 } from "class-validator"
 import { Request, Response } from "express"
 import { EntityManager } from "typeorm"
 import { defaultAdminPolicyClusterRelations } from "./index"
 import PolicyClusterService from "../../../../services/policy-cluster"
 import { PolicyArrayInputReq } from "../../../../types/policy-cluster"
-import { Type } from "class-transformer"
-import { validator } from "@medusajs/medusa"
 
 export default async (req: Request, res: Response) => {
-  const validated = await validator(AdminPolicyClusterReq, req.body)
+  const { validatedBody } = req as { validatedBody: AdminPolicyClusterReq }
 
-  console.log(validated)
   const policyClusterService: PolicyClusterService = req.scope.resolve(
     "policyClusterService"
   )
@@ -26,7 +22,7 @@ export default async (req: Request, res: Response) => {
   const created = await manager.transaction(async (transactionManager) => {
     return await policyClusterService
       .withTransaction(transactionManager)
-      .create(validated)
+      .create(validatedBody)
   })
 
   const policyCluster = await policyClusterService.retrieve(created.id, {
@@ -46,8 +42,6 @@ export class AdminPolicyClusterReq {
   description?: string
 
   @IsOptional()
-  @Type(() => PolicyArrayInputReq)
-  @ValidateNested({ each: true })
   @IsArray()
   policy?: PolicyArrayInputReq[]
 

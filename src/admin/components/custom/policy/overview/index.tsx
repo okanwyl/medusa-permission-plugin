@@ -16,7 +16,7 @@ const PolicyIndex = ({ notify }: SettingProps) => {
   const navigate = useNavigate()
 
   const view = "policy"
-  const { setShowNewPolicy } = useCreatePolicyModal()
+  const { showNewPolicy, setShowNewPolicy } = useCreatePolicyModal()
 
   const actions = useMemo(() => {
     return [
@@ -26,7 +26,7 @@ const PolicyIndex = ({ notify }: SettingProps) => {
         icon: <PlusIcon size={20} />,
       },
     ]
-  }, [setShowNewPolicy])
+  }, [view])
 
   return (
     <div className="gap-y-xsmall flex h-full grow flex-col">

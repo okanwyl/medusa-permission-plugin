@@ -26,20 +26,8 @@ export default async (req: Request, res: Response) => {
   })
 }
 
-export class AdminGetPolicyClusterPaginationParams {
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  limit = 10
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  offset = 0
-}
-
 // eslint-disable-next-line max-len
-export class AdminGetPolicyClusterParams extends AdminGetPolicyClusterPaginationParams {
+export class AdminGetPolicyClusterParams {
   @IsOptional()
   @IsString()
   name?: string
@@ -62,4 +50,12 @@ export class AdminGetPolicyClusterParams extends AdminGetPolicyClusterPagination
   @IsString()
   @IsOptional()
   q?: string
+
+  @IsOptional()
+  @Type(() => Number)
+  limit = 10
+
+  @IsOptional()
+  @Type(() => Number)
+  offset = 0
 }

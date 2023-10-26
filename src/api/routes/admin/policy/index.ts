@@ -5,7 +5,6 @@ import { AdminGetPolicyParams } from "./list-policy"
 import { AdminPolicyReq } from "./create-policy"
 import { AdminPostPolicyReq } from "./update-policy"
 import { transformQuery } from "@medusajs/medusa"
-import middlewares from "@medusajs/medusa/dist/api/middlewares"
 
 export default (app) => {
   const route = Router()
@@ -14,7 +13,7 @@ export default (app) => {
   route.post(
     "/",
     transformBody(AdminPolicyReq),
-    middlewares.wrap(require("./create-policy").default)
+    require("./create-policy").default
   )
 
   route.get(
@@ -22,7 +21,7 @@ export default (app) => {
     transformQuery(AdminGetPolicyParams, {
       isList: true,
     }),
-    middlewares.wrap(require("./list-policy").default)
+    require("./list-policy").default
   )
 
   const policiesRouter = Router({ mergeParams: true })
@@ -32,15 +31,12 @@ export default (app) => {
   policiesRouter.post(
     "/",
     transformBody(AdminPostPolicyReq),
-    middlewares.wrap(require("./update-policy").default)
+    require("./update-policy").default
   )
 
-  policiesRouter.delete(
-    "/",
-    middlewares.wrap(require("./delete-policy").default)
-  )
+  policiesRouter.delete("/", require("./delete-policy").default)
 
-  policiesRouter.get("/", middlewares.wrap(require("./get-policy").default))
+  policiesRouter.get("/", require("./get-policy").default)
 
   return app
 }

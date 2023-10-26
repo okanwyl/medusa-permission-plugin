@@ -23,20 +23,9 @@ export default async (req: Request, res: Response) => {
     limit: take,
   })
 }
-export class AdminGetPolicyPaginationParams {
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  limit = 10
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  offset = 0
-}
 
 // eslint-disable-next-line max-len
-export class AdminGetPolicyParams extends AdminGetPolicyPaginationParams {
+export class AdminGetPolicyParams {
   @IsOptional()
   @IsString()
   name?: string
@@ -59,4 +48,12 @@ export class AdminGetPolicyParams extends AdminGetPolicyPaginationParams {
   @IsString()
   @IsOptional()
   q?: string
+
+  @IsOptional()
+  @Type(() => Number)
+  limit = 10
+
+  @IsOptional()
+  @Type(() => Number)
+  offset = 0
 }
