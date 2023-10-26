@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, ValidateNested } from "class-validator"
+import { IsOptional, IsString, ValidateNested } from "class-validator"
 import { Request, Response } from "express"
 
 import { Type } from "class-transformer"

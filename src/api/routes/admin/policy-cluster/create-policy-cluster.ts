@@ -1,9 +1,4 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from "class-validator"
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator"
 import { Request, Response } from "express"
 import { EntityManager } from "typeorm"
 import { defaultAdminPolicyClusterRelations } from "./index"
